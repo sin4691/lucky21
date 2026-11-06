@@ -275,14 +275,18 @@ hr{border:0;border-top:1px solid var(--line);margin:16px 0}
 #charmBar .charm.dragging{opacity:.35}
 #charmBar .charm.over{outline:2px dashed var(--gold);outline-offset:3px}
 .demo-badge{display:inline-block;margin-left:8px;font-size:10px;letter-spacing:2px;background:#5a2a7a;color:#f0dcff;border-radius:4px;padding:2px 6px;vertical-align:middle}
-@media (max-width:820px){.cardoffers{grid-template-columns:repeat(2,1fr)}}
 .pitch{list-style:none;padding:0;margin:22px 0 6px;display:flex;flex-direction:column;gap:8px}
 .pitch li{background:#0e0f0c;border:1px solid var(--line);border-radius:10px;padding:11px 14px;font-size:14.5px;color:#d8d2bf}
 .pitch li b{color:var(--gold)}
 .pitch-note{font-size:12.5px!important;color:var(--muted)!important;margin:10px 0 0!important}
 .pitch-note b{color:var(--brass)}
 /* ---------- trick cards ---------- */
-.splitrow{display:grid;grid-template-columns:2fr 1fr;gap:16px;align-items:stretch}
+.splitrow{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;align-items:stretch}
+.cardoffers{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.splitrow #trickOffers{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.offers{grid-template-columns:repeat(3,minmax(0,1fr))}
+.offer .btn{flex:none!important;white-space:nowrap;padding:8px 12px;min-width:0}
+.cardoffers .offer .btn{padding:7px 8px;font-size:12px;max-width:100%}
 .splitrow>div{display:flex;flex-direction:column}
 .splitrow .sec{display:flex;align-items:center;min-height:24px}
 .splitrow .cardoffers{flex:1}
@@ -295,7 +299,6 @@ hr{border:0;border-top:1px solid var(--line);margin:16px 0}
 .splitrow .cardoffers{margin:10px 0}
 .splitrow #trickOffers{grid-template-columns:repeat(2,1fr)}
 .splitrow .offer .od{font-size:11.5px}
-@media (max-width:820px){.splitrow{grid-template-columns:1fr}}
 .trick-sep{display:flex;align-items:center;justify-content:center;width:22px;align-self:stretch;border-left:1px solid #34352e;margin-left:6px}
 .trick-sep span{writing-mode:vertical-rl;font-size:10px;letter-spacing:3px;color:var(--muted);font-weight:900}
 .slot.tslot{width:calc(var(--cw)*.62);height:calc(var(--cw)*.86);border-color:#4a3a5e}
@@ -357,7 +360,7 @@ hr{border:0;border-top:1px solid var(--line);margin:16px 0}
   .logo{grid-column:1/-1}
   .tools{grid-column:1/-1}
   #main{height:86vh}
-  .rules,.offers{grid-template-columns:1fr}
+  .rules{grid-template-columns:1fr}
   .ptable{grid-template-columns:repeat(2,1fr)}
 }
 </style>
@@ -509,7 +512,7 @@ const CHARMS=[
   {id:'face',name:'궁정 화가',glyph:'K',rar:1,price:5,desc:'그림카드 1장당 칩 +20',perCard:c=>isFace(c)&&{chips:20}},
   {id:'seven',name:'럭키 세븐',glyph:'7',rar:1,price:5,desc:'7 카드 1장당 배수 +7',perCard:c=>c.r==='7'&&{mult:7}},
   {id:'ace',name:'에이스 하이',glyph:'A',rar:2,price:7,desc:'에이스 1장당 배수 ×1.5',perCard:c=>c.r==='A'&&{xmult:1.5}},
-  {id:'exact',name:'퍼펙트 21',glyph:'21',rar:3,price:8,desc:'합이 정확히 21이면 배수 ×4. 3장 이상으로 만든 21이면 대신 ×7',onHand:x=>x.total===21&&{xmult:x.cards.length>=3?7:4}},
+  {id:'exact',name:'블랙잭 헌터',glyph:'21',rar:3,price:8,desc:'합이 정확히 21이면 배수 ×4. 3장 이상으로 만든 21이면 대신 ×7',onHand:x=>x.total===21&&{xmult:x.cards.length>=3?7:4}},
   {id:'coward',name:'겁쟁이의 승리',glyph:'≤17',rar:1,price:4,desc:'합 17 이하로 이기면 배수 +10',onHand:x=>x.total<=17&&{mult:10}},
   {id:'collector',name:'카드 수집가',glyph:'≡',rar:1,price:5,desc:'손패 카드 1장당 배수 +2',onHand:x=>({mult:2*x.cards.length})},
   {id:'charlie',name:'다섯 장 찰리',glyph:'5',rar:3,price:9,desc:'버스트 없이 5장을 모으면 즉시 승리하고 배수 ×2',onHand:x=>x.result==='charlie'&&{xmult:2}},
@@ -1061,7 +1064,7 @@ function renderShop(){
     <hr><div class="k">보유 부적 · 판매하면 구매가의 절반을 돌려받아요</div>
     <div class="owned" id="owned"></div><hr>
     <div class="next">다음 · <b>스테이지 ${S.stage}</b> · 목표 <b class="gold">${fmt(targetOf(S.stage))}</b>${nb?` · <span class="bn">보스: ${nb.name}</span> — ${nb.desc}`:''}</div>
-    <div class="actions"><button class="btn" id="nextStage">다음 스테이지 →</button></div>`);
+    <div class="actions"><button class="btn" id="nextStage">다음 스테이지 →</button></div>`,'shopv');
   const box=$('#offers');
   S.offers.forEach(o=>{
     const d=o.def;const div=document.createElement('div');div.className='offer'+(o.sold?' sold':'');
@@ -1160,7 +1163,35 @@ function openDeckView(back){
 }
 
 /* ---------------- screens ---------------- */
-function openPanel(html,cls=''){const o=$('#overlay');o.innerHTML=`<div class="panel ${cls}">${html}</div>`;o.classList.add('on');document.body.classList.add('locked');}
+function openPanel(html,cls=''){
+  const o=$('#overlay'),old=o.querySelector('.panel');
+  const keep=o.classList.contains('on')&&old&&cls&&old.dataset.kind===cls?old.scrollTop:0;
+  o.innerHTML=`<div class="panel ${cls}" data-kind="${cls}">${html}</div>`;
+  if(keep)o.firstElementChild.style.animation='none';
+  o.classList.add('on');document.body.classList.add('locked');
+  // 상점·덱 보기처럼 openPanel 다음에 내용을 채워 넣는 화면이 있어서, 채운 뒤에 크기를 잰다
+  const p=o.firstElementChild;
+  queueMicrotask(()=>{fitPanel();if(keep)p.scrollTop=keep;});
+}
+// 패널이 화면보다 길면 같은 디자인 그대로 비율만 줄여서 한 화면에 맞춘다.
+// 너무 작아지면(덱 보기처럼 내용이 아주 긴 경우) 최소 비율에서 멈추고 스크롤한다.
+function fitPanel(){
+  const o=$('#overlay'),p=o.querySelector('.panel');if(!p)return;
+  p.style.zoom='';p.style.width='';p.style.maxHeight='none';
+  const cs=getComputedStyle(o),availH=innerHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  const availW=o.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  const maxW=parseFloat(getComputedStyle(p).maxWidth)||availW;
+  let h=p.scrollHeight;
+  if(h<=availH){p.style.maxHeight='';return;}
+  const MIN=innerWidth<820?.5:.62;
+  let k=Math.max(MIN,availH/h);
+  // 줄어든 만큼 폭을 넓혀서 다시 재고 한 번 더 맞춘다 (폭이 넓어지면 높이가 줄어듦)
+  p.style.width=Math.min(maxW,availW/k)+'px';h=p.scrollHeight;
+  k=Math.max(MIN,Math.min(1,availH/h));
+  p.style.width=Math.min(maxW,availW/k)+'px';
+  p.style.zoom=k;p.style.maxHeight=(availH/k)+'px';
+}
+addEventListener('resize',()=>{if($('#overlay').classList.contains('on'))fitPanel();});
 function closePanel(){$('#overlay').classList.remove('on');document.body.classList.remove('locked');}
 function rulesHtml(){
   return `<div class="rules">
