@@ -509,7 +509,7 @@ const CHARMS=[
   {id:'face',name:'궁정 화가',glyph:'K',rar:1,price:5,desc:'그림카드 1장당 칩 +20',perCard:c=>isFace(c)&&{chips:20}},
   {id:'seven',name:'럭키 세븐',glyph:'7',rar:1,price:5,desc:'7 카드 1장당 배수 +7',perCard:c=>c.r==='7'&&{mult:7}},
   {id:'ace',name:'에이스 하이',glyph:'A',rar:2,price:7,desc:'에이스 1장당 배수 ×1.5',perCard:c=>c.r==='A'&&{xmult:1.5}},
-  {id:'exact',name:'정확히 21',glyph:'21',rar:2,price:7,desc:'카드 합이 정확히 21이면 배수 ×3',onHand:x=>x.total===21&&{xmult:3}},
+  {id:'exact',name:'퍼펙트 21',glyph:'21',rar:3,price:8,desc:'합이 정확히 21이면 배수 ×4. 3장 이상으로 만든 21이면 대신 ×7',onHand:x=>x.total===21&&{xmult:x.cards.length>=3?7:4}},
   {id:'coward',name:'겁쟁이의 승리',glyph:'≤17',rar:1,price:4,desc:'합 17 이하로 이기면 배수 +10',onHand:x=>x.total<=17&&{mult:10}},
   {id:'collector',name:'카드 수집가',glyph:'≡',rar:1,price:5,desc:'손패 카드 1장당 배수 +2',onHand:x=>({mult:2*x.cards.length})},
   {id:'charlie',name:'다섯 장 찰리',glyph:'5',rar:3,price:9,desc:'버스트 없이 5장을 모으면 즉시 승리하고 배수 ×2',onHand:x=>x.result==='charlie'&&{xmult:2}},
