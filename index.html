@@ -236,16 +236,20 @@ hr{border:0;border-top:1px solid var(--line);margin:16px 0}
 .shop .offers{gap:10px;margin:8px 0}
 .shop .offer{padding:10px;gap:4px}
 .shop .offer .od{min-height:0;font-size:12px;line-height:1.4}
-.shop .charm.big{width:calc(var(--cw)*.86);height:calc(var(--cw)*1.18)}
+.shop .charm.big{width:calc(var(--cw)*1.05);height:calc(var(--cw)*1.44)}
 .shop .charm.big .glyph{font-size:calc(var(--cw)*.4)}
 .shop .cardoffers{--cw:56px;gap:10px;margin:8px 0}
 .shop .svc-icon{font-size:24px}
-.shop .offer{flex-direction:row;text-align:left;align-items:center;gap:12px}
-.shop .offer .info{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0;flex:1}
-.shop .offer .info .btn{margin-top:4px}
-.shop .cardoffers .offer{gap:10px}
-.shop .cardoffers .on{font-size:13.5px}
+.shop .offer .info{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;width:100%}
+.shop .offer .info .btn{margin-top:auto}
+.shop .cardoffers{--cw:64px}
+.shop .cardoffers .on{font-size:14px}
 .shop .cardoffers .od{font-size:11.5px}
+.tabs{display:flex;gap:6px;margin-top:12px}
+.tab{background:#0e0f0c;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:7px 16px;font-weight:900;font-size:13px}
+.tab.on{background:#2a2414;border-color:var(--brass2);color:var(--gold)}
+.tab:hover:not(.on){color:var(--cream)}
+.tabbody{min-height:250px}
 .shopfoot{display:flex;gap:16px;align-items:flex-end;justify-content:space-between;border-top:1px solid var(--line);padding-top:12px;margin-top:6px;flex-wrap:wrap}
 .shopfoot .owned{margin-top:4px}
 .shopfoot .owned .charm{width:50px;height:68px;border-width:1.5px}
@@ -848,22 +852,23 @@ function rollCardOffers(){
   return out;
 }
 function openShop(){
-  S.stage++;S.nextBoss=pickBoss(S.stage);S.rerollCost=2;S.offers=rollOffers();S.cardOffers=rollCardOffers();renderShop();
+  S.stage++;S.nextBoss=pickBoss(S.stage);S.rerollCost=2;S.offers=rollOffers();S.cardOffers=rollCardOffers();S.shopTab='charm';renderShop();
 }
 function renderShop(){
   const nb=S.nextBoss;
+  const tab=S.shopTab||'charm';
   openPanel(`<div class="shop-head"><div><div class="sub">SHOP · 다음 스테이지 ${S.stage}</div><h2>상점</h2></div><div class="purse">${S.gold}G</div></div>
-    <div class="sec"><span>부적 · ${S.charms.length}/5</span><span class="grow"></span><button class="btn teal small" id="reroll">새로고침 ${S.rerollCost}G</button></div>
-    <div class="offers" id="offers"></div>
-    <div class="sec"><span>카드 · 내 덱 ${S.myDeck.length}장</span><button class="linkbtn" id="shopDeck">덱 보기</button></div>
-    <div class="cardoffers" id="cardOffers"></div>
+    <div class="tabs"><button class="tab ${tab==='charm'?'on':''}" data-t="charm">부적 ${S.charms.length}/5</button><button class="tab ${tab==='card'?'on':''}" data-t="card">카드 · 내 덱 ${S.myDeck.length}장</button>
+      <span style="flex:1"></span>${tab==='charm'?`<button class="btn teal small" id="reroll">새로고침 ${S.rerollCost}G</button>`:`<button class="linkbtn" id="shopDeck">덱 보기</button>`}</div>
+    <div class="tabbody">${tab==='charm'?'<div class="offers" id="offers"></div>':'<div class="cardoffers" id="cardOffers"></div>'}</div>
     <div class="shopfoot">
       <div><div class="k">보유 부적 · 금액 버튼을 누르면 판매</div><div class="owned" id="owned"></div></div>
       <div class="right"><div class="next">목표 <b class="gold">${fmt(TARGETS[S.stage-1])}</b>${nb?` · <span class="bn">보스: ${nb.name}</span><br>${nb.desc}`:''}</div>
       <button class="btn" id="nextStage">다음 스테이지 →</button></div>
     </div>`,'shop');
+  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{S.shopTab=t.dataset.t;sfx.click();hideTip();renderShop();});
   const box=$('#offers');
-  S.offers.forEach(o=>{
+  if(box)S.offers.forEach(o=>{
     const d=o.def;const div=document.createElement('div');div.className='offer'+(o.sold?' sold':'');
     div.appendChild(charmEl(makeCharm(d),true));
     const info=document.createElement('div');info.className='info';div.appendChild(info);
@@ -874,7 +879,7 @@ function renderShop(){
     info.appendChild(b);box.appendChild(div);
   });
   const cbox=$('#cardOffers');
-  S.cardOffers.forEach(o=>{
+  if(cbox)S.cardOffers.forEach(o=>{
     const div=document.createElement('div');div.className='offer'+(o.sold?' sold':'');
     let title,desc,label;
     if(o.kind==='card'){
@@ -910,9 +915,9 @@ function renderShop(){
     b.onclick=()=>{S.gold+=back;S.charms.splice(i,1);hideTip();sfx.gold();renderCharms();renderSide();renderShop();};
     it.appendChild(b);own.appendChild(it);
   });
-  const rr=$('#reroll');rr.disabled=S.gold<S.rerollCost;
-  rr.onclick=()=>{S.gold-=S.rerollCost;S.rerollCost++;S.offers=rollOffers();sfx.click();renderSide();renderShop();};
-  $('#shopDeck').onclick=()=>{sfx.click();openDeckView(renderShop);};
+  const rr=$('#reroll');if(rr){rr.disabled=S.gold<S.rerollCost;
+  rr.onclick=()=>{S.gold-=S.rerollCost;S.rerollCost++;S.offers=rollOffers();sfx.click();renderSide();renderShop();};}
+  if($('#shopDeck'))$('#shopDeck').onclick=()=>{sfx.click();openDeckView(renderShop);};
   $('#nextStage').onclick=()=>{sfx.click();hideTip();closePanel();startStage();};
 }
 
