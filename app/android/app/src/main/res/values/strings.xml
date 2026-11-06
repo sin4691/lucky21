@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">LUCKY 21</string>
+    <string name="title_activity_main">LUCKY 21</string>
+    <string name="package_name">com.sin4691.lucky21</string>
+    <string name="custom_url_scheme">com.sin4691.lucky21</string>
+</resources>

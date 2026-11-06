@@ -1,0 +1,22 @@
+{
+  "name": "lucky21-app",
+  "version": "1.0.0",
+  "description": "LUCKY 21 안드로이드 앱 (Capacitor)",
+  "scripts": {
+    "build": "node scripts/build-web.mjs",
+    "sync": "npm run build && npx cap sync android",
+    "open": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/core": "^8.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^4.0.0",
+    "@capacitor/cli": "^8.6.0",
+    "@fontsource/black-han-sans": "^5.3.0",
+    "@fontsource/dm-serif-display": "^5.3.0",
+    "@fontsource/noto-sans-kr": "^5.3.1"
+  },
+  "private": true
+}

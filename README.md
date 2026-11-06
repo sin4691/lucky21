@@ -43,6 +43,10 @@
 - HTML / CSS / Vanilla JavaScript, 빌드 도구와 외부 라이브러리 없음
 - 단일 `index.html` + `assets/`
 
+## 안드로이드 앱
+
+`app/` 폴더에 Capacitor로 감싼 안드로이드 프로젝트가 있습니다. 웹 버전 코드를 그대로 쓰고, 글꼴까지 앱에 내장해 오프라인에서도 동작합니다. 빌드 방법은 [app/README.md](app/README.md)를 보세요.
+
 ## 조작
 
 | 키 | 동작 |

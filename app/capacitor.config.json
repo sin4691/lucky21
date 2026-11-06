@@ -1,0 +1,9 @@
+{
+  "appId": "com.sin4691.lucky21",
+  "appName": "LUCKY 21",
+  "webDir": "www",
+  "backgroundColor": "#11120f",
+  "android": {
+    "backgroundColor": "#11120f"
+  }
+}
