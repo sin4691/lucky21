@@ -13,6 +13,10 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@null</item>
+        <!-- 카메라 구멍 영역·잠깐 나타나는 시스템 바 뒤가 회색으로 보이지 않도록 게임 배경색으로 -->
+        <item name="android:windowBackground">@color/game_bg</item>
+        <item name="android:statusBarColor">@color/game_bg</item>
+        <item name="android:navigationBarColor">@color/game_bg</item>
     </style>
 
 

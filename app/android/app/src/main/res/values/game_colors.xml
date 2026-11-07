@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 게임 배경색 (웹 쪽 --bg 와 같은 값) -->
+    <color name="game_bg">#11120F</color>
+</resources>

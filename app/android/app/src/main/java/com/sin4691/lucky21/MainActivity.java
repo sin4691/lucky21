@@ -1,5 +1,6 @@
 package com.sin4691.lucky21;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.core.view.WindowCompat;
@@ -29,6 +30,8 @@ public class MainActivity extends BridgeActivity {
     }
 
     private void hideSystemBars() {
+        // 카메라 구멍 때문에 비워 두는 줄이 회색으로 보이지 않게 창 배경을 게임 배경색으로 칠한다
+        getWindow().getDecorView().setBackgroundColor(Color.parseColor("#11120F"));
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         WindowInsetsControllerCompat controller =
                 WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
