@@ -311,6 +311,8 @@ hr{border:0;border-top:1px solid var(--line);margin:16px 0}
 .trick:hover{transform:translateY(-4px) rotate(-2deg);box-shadow:0 6px 0 #070706,0 0 18px #b48ae055}
 .trick .glyph{font-family:'DM Serif Display',serif;font-size:calc(var(--cw)*.28);color:#e2c9ff;line-height:1}
 .trick .cname{font-size:8.5px;font-weight:700;color:#cbb6e4;margin-top:4px;text-align:center;line-height:1.1;padding:0 3px}
+.trick.has-art{background-size:cover;background-position:center}
+.trick.has-art .glyph,.trick.has-art .cname{display:none}
 .cardoffers .trick{width:56px;height:78px}
 /* ---------- tutorial ---------- */
 #coachCatch{position:fixed;inset:0;z-index:48;display:none}
@@ -421,14 +423,15 @@ hr{border:0;border-top:1px solid var(--line);margin:16px 0}
    ========================================================= */
 const USE_ART = true;
 // 준비된 에셋만 나열 (없는 파일을 요청하지 않도록)
-const ART_FILES = { cardBack:null, table:null, charms:['heart','seven','piggy','charlie','diamond','club','spade','face','ace','exact','coward','collector','curse','doubler','insure','pushmaster','grow','streak','even','odd','xray','house','last','loser','ashes','gambler','slim','magician','soft','lowball','dealerup','goldfinger','glassheart','usury','rich','bigdeck','firsthand'] };
-const ART = { cardBack:null, table:null, charms:{} };
+const ART_FILES = { cardBack:null, table:null, charms:['heart','seven','piggy','charlie','diamond','club','spade','face','ace','exact','coward','collector','curse','doubler','insure','pushmaster','grow','streak','even','odd','xray','house','last','loser','ashes','gambler','slim','magician','soft','lowball','dealerup','goldfinger','glassheart','usury','rich','bigdeck','firsthand','mirror','flush'], tricks:['peek','ten','swap','mulligan','stall'] };
+const ART = { cardBack:null, table:null, charms:{}, tricks:{} };
 function loadImg(src){return new Promise(r=>{if(!src)return r(null);const i=new Image();i.onload=()=>r(src);i.onerror=()=>r(null);i.src=src;});}
 async function loadArt(){
   if(!USE_ART) return;
   ART.cardBack = await loadImg(ART_FILES.cardBack);
   ART.table = await loadImg(ART_FILES.table);
   await Promise.all(ART_FILES.charms.map(async id=>{ART.charms[id]=await loadImg(`assets/charms/${id}.webp`);}));
+  await Promise.all(ART_FILES.tricks.map(async id=>{ART.tricks[id]=await loadImg(`assets/tricks/${id}.webp`);}));
   if(ART.table){const t=$('#table');t.classList.add('art');t.style.backgroundImage=`url(${ART.table})`;}
   if(ART.cardBack){document.querySelectorAll('#deck .back').forEach(b=>{b.classList.add('art');b.style.backgroundImage=`url(${ART.cardBack})`;});}
 }
@@ -695,6 +698,7 @@ function charmEl(ch,big){
 function trickEl(t){
   const d=document.createElement('div');d.className='trick';d.dataset.id=t.id;
   d.innerHTML=`<div class="glyph">${t.glyph}</div><div class="cname">${t.name}</div>`;
+  if(ART.tricks[t.id]){d.classList.add('has-art');d.style.backgroundImage=`url(${ART.tricks[t.id]})`;}
   d.addEventListener('mouseenter',e=>{const tp=$('#tip');tp.innerHTML=`<span class="r">트릭 카드 · 1회용</span><b>${t.name}</b>${t.desc}`;tp.style.display='block';moveTip(e);});
   d.addEventListener('mousemove',moveTip);d.addEventListener('mouseleave',hideTip);
   return d;
