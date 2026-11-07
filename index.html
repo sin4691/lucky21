@@ -421,7 +421,7 @@ hr{border:0;border-top:1px solid var(--line);margin:16px 0}
    ========================================================= */
 const USE_ART = true;
 // 준비된 에셋만 나열 (없는 파일을 요청하지 않도록)
-const ART_FILES = { cardBack:null, table:null, charms:['heart','seven','piggy','charlie','diamond','club','spade','face','ace','exact','coward','collector','curse','doubler','insure','pushmaster','grow','streak','even','odd','xray','house','last','loser','ashes','gambler','slim','magician'] };
+const ART_FILES = { cardBack:null, table:null, charms:['heart','seven','piggy','charlie','diamond','club','spade','face','ace','exact','coward','collector','curse','doubler','insure','pushmaster','grow','streak','even','odd','xray','house','last','loser','ashes','gambler','slim','magician','soft','lowball','dealerup','goldfinger','glassheart','usury','rich','bigdeck','firsthand'] };
 const ART = { cardBack:null, table:null, charms:{} };
 function loadImg(src){return new Promise(r=>{if(!src)return r(null);const i=new Image();i.onload=()=>r(src);i.onerror=()=>r(null);i.src=src;});}
 async function loadArt(){
