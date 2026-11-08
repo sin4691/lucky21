@@ -1,6 +1,10 @@
 package com.sin4691.lucky21;
 
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.view.DisplayCutout;
+import android.view.View;
+import android.view.WindowInsets;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -46,7 +50,9 @@ public class MainActivity extends BridgeActivity {
             safeRight = c.right / d;
             safeBottom = c.bottom / d;
             safeLeft = c.left / d;
+            v.setPadding(0, 0, 0, 0);
             pushSafeArea();
+            pushDiag();
             return ViewCompat.onApplyWindowInsets(v, insets);
         });
 
@@ -56,6 +62,7 @@ public class MainActivity extends BridgeActivity {
                 @Override
                 public void onPageLoaded(WebView webView) {
                     pushSafeArea();
+                    webView.postDelayed(MainActivity.this::pushDiag, 800);
                 }
             });
         }
@@ -81,6 +88,38 @@ public class MainActivity extends BridgeActivity {
         getBridge().getWebView().post(() -> getBridge().getWebView().evaluateJavascript(js, null));
     }
 
+    /** 확인용: 카메라 영역 처리 상태를 웹으로 보내 화면에 표시 (문제 해결 후 제거 예정) */
+    private void pushDiag() {
+        try {
+            if (getBridge() == null || getBridge().getWebView() == null) return;
+            WebView wv = getBridge().getWebView();
+            View decor = getWindow().getDecorView();
+            View content = findViewById(android.R.id.content);
+            int[] loc = new int[2];
+            wv.getLocationOnScreen(loc);
+            int mode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ? getWindow().getAttributes().layoutInDisplayCutoutMode : -1;
+            String cut = "none";
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                WindowInsets wi = decor.getRootWindowInsets();
+                DisplayCutout dc = wi != null ? wi.getDisplayCutout() : null;
+                if (dc != null) cut = dc.getSafeInsetLeft() + "," + dc.getSafeInsetTop() + "," + dc.getSafeInsetRight() + "," + dc.getSafeInsetBottom();
+            }
+            android.util.DisplayMetrics dm = new android.util.DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getRealMetrics(dm);
+            View parent = (View) wv.getParent();
+            final String info = "sdk " + Build.VERSION.SDK_INT + " · " + Build.MANUFACTURER + " " + Build.MODEL
+                    + " | mode " + mode + " | cutout " + cut
+                    + " | screen " + dm.widthPixels + "x" + dm.heightPixels
+                    + " | web @" + loc[0] + "," + loc[1] + " " + wv.getWidth() + "x" + wv.getHeight()
+                    + " | pad decor " + decor.getPaddingLeft() + "," + decor.getPaddingTop()
+                    + " content " + (content != null ? content.getPaddingLeft() + "," + content.getPaddingTop() : "-")
+                    + " parent " + parent.getPaddingLeft() + "," + parent.getPaddingTop()
+                    + " | css " + safeLeft + "," + safeTop;
+            String js = "window.LUCKY_DIAG=" + org.json.JSONObject.quote(info) + ";window.dispatchEvent(new Event('luckydiag'));";
+            wv.post(() -> wv.evaluateJavascript(js, null));
+        } catch (Exception e) { /* 확인용이라 실패해도 무시 */ }
+    }
+
     private void hideSystemBars() {
         // 플러그인 초기화 등으로 창 속성이 바뀌었을 수 있어 매번 다시 지정
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -90,8 +129,11 @@ public class MainActivity extends BridgeActivity {
                 getWindow().setAttributes(lp);
             }
         }
-        // 비어 보이는 영역이 생겨도 회색이 아니라 게임 배경색으로 보이게
+        // 비어 보이는 영역이 생겨도 회색이 아니라 게임 배경색으로 보이게 (창 자체와 루트 뷰 모두)
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#11120F")));
         getWindow().getDecorView().setBackgroundColor(Color.parseColor("#11120F"));
+        View content = findViewById(android.R.id.content);
+        if (content != null) content.setBackgroundColor(Color.parseColor("#11120F"));
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         WindowInsetsControllerCompat controller =
                 WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
