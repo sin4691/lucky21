@@ -3,6 +3,7 @@
 
 /* ---------------- render ---------------- */
 function renderSide(){
+  if(S&&S.gold>=25)achEvent('gold');
   $('#stageV').textContent=S.stage>8?`${S.stage} · ∞`:`${S.stage} / 8`;
   $('#stageLbl').textContent=S.boss?'BOSS':'';
   $('#targetV').textContent=fmt(S.target);

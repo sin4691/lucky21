@@ -4,8 +4,10 @@
 /* ---------------- flow ---------------- */
 function startStage(){
   S.boss=S.nextBoss;S.target=targetOf(S.stage);S.handNo=0;
-  if(hasCharm('magician')&&S.tricks.length<2){const t=rnd(TRICKS);S.tricks.push(t);setTimeout(()=>toast(`마술사의 모자: ${t.name} 획득`),300);}
-  S.handsLeft=5-(S.boss?.id==='thin'?1:0);S.score=0;S.draw=shuffle([...S.myDeck]);S.discard=[];S.shoe=newDeck();S.insuranceUsed=false;
+  if(hasCharm('magician')&&S.tricks.length<2){const t=rnd(TRICKS);S.tricks.push(t);discover('tricks',t.id);setTimeout(()=>toast(`마술사의 모자: ${t.name} 획득`),300);}
+  if(S.boss)discover('bosses',S.boss.id);
+  achEvent('stage');
+  S.handsLeft=baseHands();S.score=0;S.draw=shuffle([...S.myDeck]);S.discard=[];S.shoe=newDeck();S.insuranceUsed=false;
   S.player=[];S.dealer=[];S.pEls=[];S.dEls=[];
   $('#pHand').innerHTML='';$('#dHand').innerHTML='';$('#pTot').textContent='';$('#dTot').textContent='';
   renderSide();renderCharms();setCM(0,0);
@@ -109,14 +111,16 @@ async function finish(result){
   showBanner(result);
   if(WIN_SET.has(result)){S.streak++;}else if(result!=='push'){S.streak=0;}
   if(result==='bj')burst(innerWidth/2,innerHeight/2,50,['#e8c46a','#fff','#7fe0d4'],8);
-  await scoreHand(result);
+  if(result==='bj')S.bjCount=(S.bjCount||0)+1;
+  const pts=await scoreHand(result);
+  achEvent('hand',{pts,result,win:WIN_SET.has(result),cards:[...S.player]});
   S.handsLeft--;S.handNo++;renderSide();
   const box=$('#cmWrap').closest('.box');
   await tutStep('score',[
     {target:box,title:'점수 = 칩 × 배수',html:WIN_SET.has(result)||result==='push'
       ?`이기면 <span class="c">칩</span>(내 카드 숫자의 합 + 기본 칩)에 <span class="m">배수</span>를 곱한 만큼 점수가 들어와요. 블랙잭은 기본값이 훨씬 커요.`
       :`졌을 땐 점수가 없어요. 이기면 <span class="c">칩</span>(내 카드 숫자의 합 + 기본 칩)에 <span class="m">배수</span>를 곱한 만큼 점수가 들어와요.`},
-    {target:'.scorebox',title:'핸드 안에 목표 점수 넘기기',html:`스테이지마다 <b>핸드 ${S.boss?.id==='thin'?4:5}번</b>이 주어져요. 그 안에 목표 점수를 넘기면 클리어하고, 남은 핸드는 골드로 바뀌어요.`},
+    {target:'.scorebox',title:'핸드 안에 목표 점수 넘기기',html:`스테이지마다 <b>핸드 ${baseHands()}번</b>이 주어져요. 그 안에 목표 점수를 넘기면 클리어하고, 남은 핸드는 골드로 바뀌어요.`},
   ]);
   await sleep(650);
   if(S.score>=S.target)return stageClear();

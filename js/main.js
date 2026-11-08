@@ -10,6 +10,7 @@ addEventListener('keydown',e=>{
 $('#btnSpeed').onclick=()=>{SPEED=SPEED===1?.5:1;$('#btnSpeed').textContent=SPEED===1?'속도 1x':'속도 2x';};
 $('#btnMute').onclick=()=>{muted=!muted;$('#btnMute').textContent=muted?'소리 끔':'소리 켬';};
 $('#btnDeck').onclick=()=>{if($('#overlay').classList.contains('on'))return;sfx.click();openDeckView(null);};
+$('#btnCol').onclick=()=>{if($('#overlay').classList.contains('on')||(S&&S.busy&&S.player.length))return;sfx.click();openCollection(null);};
 $('#btnHelp').onclick=()=>{
   if($('#overlay').classList.contains('on'))return;
   openPanel(`<h2>규칙</h2>${rulesHtml()}<div class="actions"><button class="btn teal small" id="tutAgain">튜토리얼 다시 보기</button><button class="btn" id="cl">닫기</button></div>`);$('#cl').onclick=closePanel;

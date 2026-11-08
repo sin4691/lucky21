@@ -6,7 +6,8 @@ async function stageClear(){
   hideBanner();sfx.big();burst(innerWidth/2,innerHeight*.4,90,['#e8c46a','#fff3c4','#7fe0d4','#ff8a5c'],11);shake(true);
   await sleep(500);
   if(S.stage===8&&!S.endless)return victory();
-  const cap=hasCharm('usury')?10:5;
+  if(S.boss)achEvent('bossClear');
+  const cap=hasCharm('usury')||S.richDeck?10:5;
   const rows=[[S.boss?'보스 클리어':'스테이지 클리어',S.boss?6:4],[`남은 핸드 ${S.handsLeft}`,S.handsLeft],[`이자 (5골드당 1, 최대 ${cap})`,Math.min(cap,Math.floor(S.gold/5))]];
   if(hasCharm('piggy'))rows.push(['돼지 저금통',3]);
   const sum=rows.reduce((a,r)=>a+r[1],0);
@@ -21,7 +22,7 @@ async function stageClear(){
   const btn=$('#toShop');btn.disabled=false;btn.onclick=()=>{sfx.click();openShop();};
 }
 function rollOffers(){
-  const pool=CHARMS.filter(c=>!hasCharm(c.id));const out=[];
+  const pool=CHARMS.filter(c=>!hasCharm(c.id)&&(S.demo||isCharmUnlocked(c.id)));const out=[];
   const w={1:6,2:3,3:1};
   while(out.length<3&&pool.length){
     const tot=pool.reduce((a,c)=>a+w[c.rar],0);let r=Math.random()*tot;
@@ -65,7 +66,7 @@ function renderShop(){
     div.insertAdjacentHTML('beforeend',`<div class="rar r${d.rar}">${RAR_NAME[d.rar]}</div><div class="on">${d.name}</div><div class="od">${d.desc.replace('{v}',0)}</div>`);
     const b=document.createElement('button');b.className='btn small';b.textContent=o.sold?'구매 완료':`구매 ${d.price}G`;
     b.disabled=o.sold||S.gold<d.price||S.charms.length>=5;
-    b.onclick=()=>{S.gold-=d.price;S.charms.push(makeCharm(d));o.sold=true;sfx.buy();const c=center(b);burst(c.x,c.y,30);renderCharms();renderSide();renderShop();};
+    b.onclick=()=>{S.gold-=d.price;S.charms.push(makeCharm(d));discover('charms',d.id);o.sold=true;sfx.buy();const c=center(b);burst(c.x,c.y,30);renderCharms();renderSide();renderShop();};
     div.appendChild(b);box.appendChild(div);
   });
   const cbox=$('#cardOffers');
@@ -106,7 +107,7 @@ function renderShop(){
     div.insertAdjacentHTML('beforeend',`<div class="on">${t.name}</div><div class="od">${t.desc}</div>`);
     const b=document.createElement('button');b.className='btn small';b.textContent=o.sold?'완료':`구매 ${t.price}G`;
     b.disabled=o.sold||S.gold<t.price||S.tricks.length>=2;
-    b.onclick=()=>{S.gold-=t.price;S.tricks.push(t);o.sold=true;sfx.buy();renderCharms();renderSide();renderShop();};
+    b.onclick=()=>{S.gold-=t.price;S.tricks.push(t);discover('tricks',t.id);o.sold=true;sfx.buy();renderCharms();renderSide();renderShop();};
     div.appendChild(b);tbox.appendChild(div);
   });
   const own=$('#owned');

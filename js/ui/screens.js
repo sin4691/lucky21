@@ -64,7 +64,7 @@ function title(){
     <div class="actions" style="justify-content:space-between">${recHtml()||'<span></span>'}
       <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end"><button class="btn teal" id="demo">데모 모드<small>빌드 완성 상태로 시작</small></button>${sv?`<button class="btn" id="cont">이어하기<small>STAGE ${sv.stage}${sv.phase==='shop'||sv.phase==='clear'?' · 상점':''}</small></button>`:''}<button class="btn" id="go">${sv?'새 게임':'게임 시작'}<small>NEW RUN</small></button></div></div>`,'title');
   if(sv)$('#cont').onclick=()=>{ac();sfx.click();resumeRun();};
-  $('#go').onclick=()=>{ac();sfx.click();if(sv)clearSave();startStage();};
+  $('#go').onclick=()=>{ac();sfx.click();openDeckSelect(sv);};
   $('#demo').onclick=()=>{ac();sfx.click();setupDemo();startStage();};
 }
 function setupDemo(){

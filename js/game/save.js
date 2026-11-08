@@ -13,6 +13,7 @@ function snapshot(phase){
   if(!S||S.demo)return;
   const pend=S.player.filter(c=>!c.broken);
   const d={v:1,phase,at:Date.now(),
+    deckId:S.deckId,handMod:S.handMod||0,richDeck:!!S.richDeck,bjCount:S.bjCount||0,
     stage:S.stage,gold:S.gold,streak:S.streak,bestHand:S.bestHand,usedBoss:S.usedBoss,endless:S.endless,
     tut:S.tut,tutSeen:S.tutSeen,
     charms:S.charms.map(c=>({id:c.id,val:c.val})),tricks:S.tricks.map(t=>t.id),
@@ -32,7 +33,7 @@ function clearSave(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
 function restore(d){
   newRun();
   const byId=new Map();const card=c=>{if(byId.has(c.id))return byId.get(c.id);const x={...c};byId.set(c.id,x);return x;};
-  Object.assign(S,{stage:d.stage,gold:d.gold,streak:d.streak,bestHand:d.bestHand,usedBoss:d.usedBoss||[],endless:d.endless,
+  Object.assign(S,{deckId:d.deckId||'classic',handMod:d.handMod||0,richDeck:!!d.richDeck,bjCount:d.bjCount||0,stage:d.stage,gold:d.gold,streak:d.streak,bestHand:d.bestHand,usedBoss:d.usedBoss||[],endless:d.endless,
     tut:d.tut,tutSeen:d.tutSeen||{},score:d.score,target:d.target,handsLeft:d.handsLeft,handNo:d.handNo||0,insuranceUsed:d.insuranceUsed,
     rerollCost:d.rerollCost||2});
   S.charms=d.charms.map(c=>{const def=CHARMS.find(x=>x.id===c.id);return def&&{...makeCharm(def),val:c.val||0};}).filter(Boolean);
