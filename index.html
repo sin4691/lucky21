@@ -463,53 +463,20 @@ function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext
 function tone(f,d=.09,type='triangle',vol=.1,delay=0){const a=ac();if(!a||muted)return;const t=a.currentTime+delay;const o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+.02);}
 function noise(d=.07,vol=.18,freq=2600){const a=ac();if(!a||muted)return;const n=a.sampleRate*d,b=a.createBuffer(1,n,a.sampleRate),ch=b.getChannelData(0);for(let i=0;i<n;i++)ch[i]=(Math.random()*2-1)*Math.pow(1-i/n,2);const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();f.type='bandpass';f.frequency.value=freq;f.Q.value=.8;g.gain.value=vol;s.buffer=b;s.connect(f).connect(g).connect(a.destination);s.start();}
 let pitch=0;
-// 녹음된 효과음 (Kenney Casino Audio / Interface Sounds, CC0). 파일이 없거나 못 불러오면 합성음으로 대체
-const SFX_FILES={
-  deal:['card-slide-1','card-slide-2','card-slide-3','card-slide-4','card-slide-5','card-slide-6'],
-  flip:['card-place-1','card-place-2','card-place-3','card-place-4'],
-  sweep:['card-shove-1','card-shove-2','card-shove-3'],
-  shuffle:['card-shuffle'],
-  chip:['chip-lay-1','chip-lay-2','chip-lay-3'],
-  mult:['chips-collide-1','chips-collide-2','chips-collide-3','chips-collide-4'],
-  stack:['chips-stack-1','chips-stack-2','chips-stack-3'],
-  handle:['chips-handle-1','chips-handle-2','chips-handle-3'],
-  fan:['card-fan-1'],
-  click:['ui-click_001'],select:['ui-select_002'],error:['ui-error_006'],ok:['ui-confirmation_002'],
-};
-const SFXBUF={};
-async function loadSfx(){
-  const a=ac();if(!a)return;
-  await Promise.all(Object.entries(SFX_FILES).map(async([k,list])=>{
-    const bufs=[];
-    for(const name of list){
-      try{const r=await fetch(`assets/sfx/${name}.mp3`);if(!r.ok)continue;bufs.push(await a.decodeAudioData(await r.arrayBuffer()));}catch(e){}
-    }
-    if(bufs.length)SFXBUF[k]=bufs;
-  }));
-}
-// 브라우저는 사용자가 한 번 누르기 전까지 소리를 막아 두므로 첫 터치에서 깨운다
-addEventListener('pointerdown',()=>{const a=ac();if(a&&a.state==='suspended')a.resume();},{passive:true});
-function playS(key,{rate=1,vol=1,delay=0}={}){
-  const a=ac(),list=SFXBUF[key];if(!a||muted||!list)return !!list;
-  const src=a.createBufferSource(),g=a.createGain();
-  src.buffer=list[Math.random()*list.length|0];src.playbackRate.value=rate*(0.96+Math.random()*.08);g.gain.value=vol;
-  src.connect(g).connect(a.destination);src.start(a.currentTime+delay);return true;
-}
-const up=()=>{const r=1+pitch*.035;pitch=Math.min(pitch+1,24);return r;};
 const sfx={
-  card:()=>playS('deal',{vol:.9})||noise(.08,.22,2200+Math.random()*900),
-  flip:()=>playS('flip')||noise(.11,.2,1500),
-  sweep:()=>playS('sweep',{vol:.6}),
-  shuffle:()=>playS('shuffle',{vol:.7}),
-  chip:()=>{if(!playS('chip',{rate:up(),vol:.8}))tone(520*Math.pow(2,(pitch-1)/12),.07,'triangle',.09);},
-  mult:()=>{const r=up();if(playS('mult',{rate:r,vol:.8}))tone(330*r,.08,'triangle',.03);else tone(330*Math.pow(2,(pitch-1)/12),.1,'square',.05);},
-  xmult:()=>{pitch=Math.min(pitch+1,24);const r=up();if(playS('stack',{rate:r}))tone(440*r,.16,'square',.035,.03);else{tone(220,.18,'sawtooth',.06);tone(440*Math.pow(2,pitch/12),.2,'square',.05,.04);}},
-  gold:()=>{if(!playS('handle',{vol:.8})){tone(1320,.06,'sine',.08);tone(1760,.09,'sine',.07,.05);}else tone(1760,.08,'sine',.04,.02);},
-  win:()=>{playS('stack',{vol:.7});[523,659,784,1046].forEach((f,i)=>tone(f,.25,'triangle',.06,i*.07));},
-  big:()=>{playS('handle');playS('stack',{delay:.08});playS('stack',{delay:.2,rate:1.1});[392,523,659,784,1046,1318].forEach((f,i)=>tone(f,.35,'triangle',.06,i*.06));},
-  lose:()=>{playS('fan',{vol:.6});tone(196,.3,'sawtooth',.05);tone(147,.4,'sawtooth',.04,.12);},
-  click:()=>playS('click',{vol:.7})||tone(880,.04,'square',.04),
-  buy:()=>{if(!playS('handle'))tone(988,.08,'triangle',.08);playS('ok',{vol:.5,delay:.05})||tone(1318,.12,'triangle',.08,.06);},
+  card:()=>noise(.08,.22,2200+Math.random()*900),
+  flip:()=>noise(.11,.2,1500),
+  sweep:()=>{},
+  shuffle:()=>{},
+  chip:()=>{tone(520*Math.pow(2,pitch/12),.07,'triangle',.09);pitch=Math.min(pitch+1,24);},
+  mult:()=>{tone(330*Math.pow(2,pitch/12),.1,'square',.05);pitch=Math.min(pitch+1,24);},
+  xmult:()=>{tone(220,.18,'sawtooth',.06);tone(440*Math.pow(2,pitch/12),.2,'square',.05,.04);pitch=Math.min(pitch+2,24);},
+  gold:()=>{tone(1320,.06,'sine',.08);tone(1760,.09,'sine',.07,.05);},
+  win:()=>[523,659,784,1046].forEach((f,i)=>tone(f,.25,'triangle',.08,i*.07)),
+  big:()=>[392,523,659,784,1046,1318].forEach((f,i)=>tone(f,.35,'triangle',.08,i*.06)),
+  lose:()=>{tone(196,.3,'sawtooth',.06);tone(147,.4,'sawtooth',.05,.12);},
+  click:()=>tone(880,.04,'square',.04),
+  buy:()=>{tone(988,.08,'triangle',.08);tone(1318,.12,'triangle',.08,.06);},
 };
 
 /* ---------------- cards ---------------- */
@@ -1347,8 +1314,7 @@ function rulesHtml(){
     <div>푸시<b><span class="c">0</span> × <span class="m">1</span></b></div>
     <div>더블다운<b><span class="m">최종 ×2</span></b></div>
   </div>
-  <p style="font-size:12.5px;color:var(--muted)">카드 칩: 숫자는 그대로, 그림카드 10, 에이스 11. 딜러는 17 이상에서 스탠드합니다.</p>
-  <p style="font-size:11px;color:var(--muted)">효과음: Kenney Casino Audio · Interface Sounds (CC0)</p>`;
+  <p style="font-size:12.5px;color:var(--muted)">카드 칩: 숫자는 그대로, 그림카드 10, 에이스 11. 딜러는 17 이상에서 스탠드합니다.</p>`;
 }
 function title(){
   const sv=loadSave();
@@ -1435,7 +1401,7 @@ $('#btnHelp').onclick=()=>{
 
 document.addEventListener('touchstart',e=>{if(!e.target.closest('.charm,.card'))hideTip();},{passive:true});
 addEventListener('scroll',hideTip,{passive:true});
-Promise.all([loadArt(),loadSfx()]).then(title);
+loadArt().then(title);
 </script>
 </body>
 </html>
