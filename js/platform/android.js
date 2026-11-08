@@ -11,6 +11,7 @@ function confirmBox(title,text,yes,no,onYes){
 const CapApp=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.App;
 function onBack(){
   if($('#confirmWrap').classList.contains('on')){$('#cNo').click();return;}
+  if($('#side').classList.contains('menu')){$('#side').classList.remove('menu');return;}
   if(S&&S.coaching){$('#coachOk')&&$('#coachOk').click();return;}
   if($('#overlay').classList.contains('on')){
     // 닫기·취소가 있는 창(규칙, 덱 보기, 카드 선택)은 그 창만 닫는다
