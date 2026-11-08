@@ -13,8 +13,10 @@ const www = path.join(appDir, 'www');
 fs.rmSync(www, { recursive: true, force: true });
 fs.mkdirSync(www, { recursive: true });
 
-// 1) 게임 에셋
-fs.cpSync(path.join(gameDir, 'assets'), path.join(www, 'assets'), { recursive: true });
+// 1) 게임 코드(css, js)와 에셋
+for (const dir of ['assets', 'css', 'js']) {
+  fs.cpSync(path.join(gameDir, dir), path.join(www, dir), { recursive: true });
+}
 
 // 2) 글꼴: 패키지별로 쓰는 CSS만 골라서, 그 CSS가 참조하는 파일만 복사
 const FONT_CSS = [
