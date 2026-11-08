@@ -82,6 +82,14 @@ public class MainActivity extends BridgeActivity {
     }
 
     private void hideSystemBars() {
+        // 플러그인 초기화 등으로 창 속성이 바뀌었을 수 있어 매번 다시 지정
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            WindowManager.LayoutParams lp = getWindow().getAttributes();
+            if (lp.layoutInDisplayCutoutMode != WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES) {
+                lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+                getWindow().setAttributes(lp);
+            }
+        }
         // 비어 보이는 영역이 생겨도 회색이 아니라 게임 배경색으로 보이게
         getWindow().getDecorView().setBackgroundColor(Color.parseColor("#11120F"));
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
