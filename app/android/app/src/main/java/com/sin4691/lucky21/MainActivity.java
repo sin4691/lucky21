@@ -2,9 +2,7 @@ package com.sin4691.lucky21;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.view.DisplayCutout;
 import android.view.View;
-import android.view.WindowInsets;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -52,7 +50,6 @@ public class MainActivity extends BridgeActivity {
             safeLeft = c.left / d;
             v.setPadding(0, 0, 0, 0);
             pushSafeArea();
-            pushDiag();
             return ViewCompat.onApplyWindowInsets(v, insets);
         });
 
@@ -62,7 +59,6 @@ public class MainActivity extends BridgeActivity {
                 @Override
                 public void onPageLoaded(WebView webView) {
                     pushSafeArea();
-                    webView.postDelayed(MainActivity.this::pushDiag, 800);
                 }
             });
         }
@@ -86,38 +82,6 @@ public class MainActivity extends BridgeActivity {
                 + "s.setProperty('--sal','" + safeLeft + "px');"
                 + "window.dispatchEvent(new Event('resize'));})();";
         getBridge().getWebView().post(() -> getBridge().getWebView().evaluateJavascript(js, null));
-    }
-
-    /** 확인용: 카메라 영역 처리 상태를 웹으로 보내 화면에 표시 (문제 해결 후 제거 예정) */
-    private void pushDiag() {
-        try {
-            if (getBridge() == null || getBridge().getWebView() == null) return;
-            WebView wv = getBridge().getWebView();
-            View decor = getWindow().getDecorView();
-            View content = findViewById(android.R.id.content);
-            int[] loc = new int[2];
-            wv.getLocationOnScreen(loc);
-            int mode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ? getWindow().getAttributes().layoutInDisplayCutoutMode : -1;
-            String cut = "none";
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                WindowInsets wi = decor.getRootWindowInsets();
-                DisplayCutout dc = wi != null ? wi.getDisplayCutout() : null;
-                if (dc != null) cut = dc.getSafeInsetLeft() + "," + dc.getSafeInsetTop() + "," + dc.getSafeInsetRight() + "," + dc.getSafeInsetBottom();
-            }
-            android.util.DisplayMetrics dm = new android.util.DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getRealMetrics(dm);
-            View parent = (View) wv.getParent();
-            final String info = "sdk " + Build.VERSION.SDK_INT + " · " + Build.MANUFACTURER + " " + Build.MODEL
-                    + " | mode " + mode + " | cutout " + cut
-                    + " | screen " + dm.widthPixels + "x" + dm.heightPixels
-                    + " | web @" + loc[0] + "," + loc[1] + " " + wv.getWidth() + "x" + wv.getHeight()
-                    + " | pad decor " + decor.getPaddingLeft() + "," + decor.getPaddingTop()
-                    + " content " + (content != null ? content.getPaddingLeft() + "," + content.getPaddingTop() : "-")
-                    + " parent " + parent.getPaddingLeft() + "," + parent.getPaddingTop()
-                    + " | css " + safeLeft + "," + safeTop;
-            String js = "window.LUCKY_DIAG=" + org.json.JSONObject.quote(info) + ";window.dispatchEvent(new Event('luckydiag'));";
-            wv.post(() -> wv.evaluateJavascript(js, null));
-        } catch (Exception e) { /* 확인용이라 실패해도 무시 */ }
     }
 
     private void hideSystemBars() {

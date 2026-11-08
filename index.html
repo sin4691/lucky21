@@ -425,7 +425,6 @@ hr{border:0;border-top:1px solid var(--line);margin:16px 0}
 <div id="tip"></div>
 <div id="toast"></div>
 <div id="coachCatch"></div><div id="coachSpot"></div><div id="coachBox"></div>
-<div id="diag" style="position:fixed;left:calc(4px + var(--sal));right:4px;bottom:calc(4px + var(--sab));z-index:90;font:10px/1.4 monospace;color:#9fe3f2;background:#000c;border:1px solid #1d5664;border-radius:6px;padding:4px 6px;display:none;pointer-events:none;word-break:break-all"></div>
 <div id="confirmWrap"><div class="cbox"><h4 id="cTitle"></h4><p id="cText"></p><div class="actions"><button class="btn small teal" id="cNo"></button><button class="btn small" id="cYes"></button></div></div></div>
 
 <script>
@@ -1368,10 +1367,6 @@ function confirmBox(title,text,yes,no,onYes){
   $('#cNo').onclick=()=>{sfx.click();$('#confirmWrap').classList.remove('on');};
   $('#cYes').onclick=()=>{$('#confirmWrap').classList.remove('on');onYes();};
 }
-// 확인용: 안드로이드 앱이 보내 준 카메라 영역 정보를 화면 아래에 표시 (문제 해결 후 제거 예정)
-function showDiag(){const d=$('#diag');if(!window.LUCKY_DIAG)return;const cs=getComputedStyle(document.documentElement);
-  d.textContent=window.LUCKY_DIAG+' | vars '+['--sat','--sal'].map(v=>cs.getPropertyValue(v).trim()||'0').join(',')+' | inner '+innerWidth+'x'+innerHeight;d.style.display='block';}
-addEventListener('luckydiag',showDiag);
 const CapApp=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.App;
 function onBack(){
   if($('#confirmWrap').classList.contains('on')){$('#cNo').click();return;}
