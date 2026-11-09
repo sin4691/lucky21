@@ -39,29 +39,36 @@ function unknownCharmEl(locked){
   d.innerHTML=`<div class="glyph">${locked?'✕':'?'}</div><div class="cname">${locked?'잠김':'미발견'}</div>`;
   return d;
 }
-function openCollection(back){
+// 탭 3개(업적 / 부적 / 트릭·보스)로 나눠 모바일에서도 한 화면에 들어가게 한다
+function openCollection(back,tab='ach'){
   const m=META,nCh=m.charms.length,nTr=m.tricks.length,nBo=m.bosses.length;
-  const achRows=ACHIEVEMENTS.map(a=>{
-    const done=m.achs.includes(a.id);
-    return`<div class="ach${done?' done':''}"><span class="mark">${done?'✓':''}</span><div><b>${a.name}</b><span>${a.desc}</span></div><em>${rewardText(a)}</em></div>`;
-  }).join('');
-  const bossRows=BOSSES.map(b=>m.bosses.includes(b.id)
-    ?`<div class="boss-row"><b>${b.name}</b><span>${b.desc}</span></div>`
-    :`<div class="boss-row unknown"><b>???</b><span>아직 만나지 못한 보스</span></div>`).join('');
+  const tabs=[['ach',`업적 ${m.achs.length}/${ACHIEVEMENTS.length}`],['charm',`부적 ${nCh}/${CHARMS.length}`],['etc',`트릭·보스 ${nTr+nBo}/${TRICKS.length+BOSSES.length}`]]
+    .map(([id,label])=>`<button class="col-tab${id===tab?' on':''}" data-tab="${id}">${label}</button>`).join('');
+  let body='';
+  if(tab==='ach'){
+    body=`<div class="achs">${ACHIEVEMENTS.map(a=>{
+      const done=m.achs.includes(a.id);
+      return`<div class="ach${done?' done':''}"><span class="mark">${done?'✓':''}</span><div><b>${a.name}</b><span>${a.desc}</span></div><em>${rewardText(a)}</em></div>`;
+    }).join('')}</div>`;
+  }else if(tab==='charm'){
+    body=`<div class="col-grid" id="colCharms"></div><p class="col-note">부적은 한 번 구매하면 발견돼요. ✕는 업적으로 해금해야 상점에 나와요.</p>`;
+  }else{
+    body=`<div class="sec">트릭 카드</div><div class="col-grid" id="colTricks"></div>
+      <div class="sec">보스</div><div class="bosses">${BOSSES.map(b=>m.bosses.includes(b.id)
+        ?`<div class="boss-row"><b>${b.name}</b><span>${b.desc}</span></div>`
+        :`<div class="boss-row unknown"><b>???</b><span>아직 만나지 못한 보스</span></div>`).join('')}</div>`;
+  }
   openPanel(`<div class="sub">COLLECTION</div><h2>도감</h2>
-    <div class="sec">업적 · ${m.achs.length}/${ACHIEVEMENTS.length}</div><div class="achs">${achRows}</div>
-    <div class="sec">부적 · 발견 ${nCh}/${CHARMS.length}</div><div class="col-grid" id="colCharms"></div>
-    <div class="sec">트릭 카드 · 발견 ${nTr}/${TRICKS.length}</div><div class="col-grid" id="colTricks"></div>
-    <div class="sec">보스 · 만남 ${nBo}/${BOSSES.length}</div><div class="bosses">${bossRows}</div>
-    <p style="font-size:12px;color:var(--muted)">부적과 트릭 카드는 한 번 구매하면 발견돼요. 데모 모드에서는 기록되지 않아요.</p>
-    <div class="actions"><button class="btn small" id="colClose">닫기</button></div>`,'collection');
+    <div class="col-tabs">${tabs}</div>${body}
+    <div class="actions"><span class="col-note">데모 모드는 기록되지 않아요.</span><button class="btn small" id="colClose">닫기</button></div>`,'collection');
+  document.querySelectorAll('.col-tab').forEach(t=>t.onclick=()=>{if(t.dataset.tab===tab)return;sfx.click();hideTip();openCollection(back,t.dataset.tab);});
   const cg=$('#colCharms');
-  for(const c of CHARMS){
+  if(cg)for(const c of CHARMS){
     if(m.charms.includes(c.id))cg.appendChild(charmEl(makeCharm(c)));
     else cg.appendChild(unknownCharmEl(!isCharmUnlocked(c.id)));
   }
   const tg=$('#colTricks');
-  for(const t of TRICKS){
+  if(tg)for(const t of TRICKS){
     if(m.tricks.includes(t.id))tg.appendChild(trickEl(t));
     else{const d=document.createElement('div');d.className='trick unknown';d.innerHTML='<div class="glyph">?</div>';tg.appendChild(d);}
   }

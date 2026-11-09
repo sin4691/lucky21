@@ -26,6 +26,8 @@ import com.getcapacitor.WebViewListener;
  */
 public class MainActivity extends BridgeActivity {
 
+    private final Runnable rehide = this::hideSystemBars;
+
     // 마지막으로 받은 안전 영역 여백 (CSS px)
     private float safeTop, safeRight, safeBottom, safeLeft;
 
@@ -50,6 +52,12 @@ public class MainActivity extends BridgeActivity {
             safeLeft = c.left / d;
             v.setPadding(0, 0, 0, 0);
             pushSafeArea();
+            // 가장자리 터치·뒤로 가기 제스처로 상태바가 튀어나오면, 잠시 뒤 다시 숨겨 전체화면으로 되돌린다
+            if (insets.isVisible(WindowInsetsCompat.Type.statusBars())
+                    || insets.isVisible(WindowInsetsCompat.Type.navigationBars())) {
+                v.removeCallbacks(rehide);
+                v.postDelayed(rehide, 1200);
+            }
             return ViewCompat.onApplyWindowInsets(v, insets);
         });
 
@@ -61,6 +69,11 @@ public class MainActivity extends BridgeActivity {
                     pushSafeArea();
                 }
             });
+        }
+
+        // 웹뷰 자체가 끌려 내려가는(오버스크롤) 현상 방지
+        if (getBridge() != null && getBridge().getWebView() != null) {
+            getBridge().getWebView().setOverScrollMode(View.OVER_SCROLL_NEVER);
         }
 
         hideSystemBars();

@@ -22,8 +22,8 @@ function fitPanel(){
   const maxW=parseFloat(getComputedStyle(p).maxWidth)||availW;
   let h=p.scrollHeight;
   if(h<=availH){p.style.maxHeight='';return;}
-  // 도감처럼 목록이 긴 화면은 글자가 읽히는 크기에서 멈추고 스크롤, 폴드 커버처럼 아주 좁은 폰은 덜 줄인다
-  const MIN=innerWidth>=820?.62:p.dataset.kind==='collection'?.85:innerWidth<340?.62:.5;
+  // 폴드 커버처럼 아주 좁은 폰은 글자가 읽히도록 덜 줄인다
+  const MIN=innerWidth>=820&&innerHeight>=520?.62:innerWidth<340?.62:.5;
   let k=Math.max(MIN,availH/h);
   // 줄어든 만큼 폭을 넓혀서 다시 재고 한 번 더 맞춘다 (폭이 넓어지면 높이가 줄어듦)
   p.style.width=Math.min(maxW,availW/k)+'px';h=p.scrollHeight;
