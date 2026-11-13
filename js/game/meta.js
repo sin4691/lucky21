@@ -34,12 +34,12 @@ function achEvent(ev,d={}){
   }
 }
 function rewardText(a){
-  if(a.reward.deck)return`덱 "${DECKS.find(d=>d.id===a.reward.deck).name}"`;
-  return`부적 "${CHARMS.find(c=>c.id===a.reward.charm).name}"`;
+  if(a.reward.deck)return t('ui.rewardDeck',{name:DECKS.find(d=>d.id===a.reward.deck).name});
+  return t('ui.rewardCharm',{name:CHARMS.find(c=>c.id===a.reward.charm).name});
 }
 function announceUnlock(a){
   const el=document.createElement('div');el.className='unlock';
-  el.innerHTML=`<span class="k">업적 달성 · ${a.name}</span><b>${rewardText(a)} 해금!</b>`;
+  el.innerHTML=`<span class="k">${t('ui.achDone',{name:a.name})}</span><b>${t('ui.unlocked',{what:rewardText(a)})}</b>`;
   document.body.appendChild(el);sfx.gold();
   requestAnimationFrame(()=>el.classList.add('on'));
   setTimeout(()=>{el.classList.remove('on');setTimeout(()=>el.remove(),400);},3200);

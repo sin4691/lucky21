@@ -12,7 +12,7 @@ function cardEl(c,down){
   const tilt=d.firstElementChild;
   d.addEventListener('mousemove',e=>{const r=d.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;tilt.style.transform=`translateY(-8px) rotateX(${-y*18}deg) rotateY(${x*18}deg)`;});
   d.addEventListener('mouseleave',()=>{tilt.style.transform='';hideTip();});
-  if(c.enh)d.addEventListener('mouseenter',e=>{if(d.classList.contains('down'))return;const t=$('#tip');t.innerHTML=`<span class="r">강화</span><b>${ENH[c.enh].name} 카드</b>${ENH[c.enh].desc}`;t.style.display='block';moveTip(e);});
+  if(c.enh)d.addEventListener('mouseenter',e=>{if(d.classList.contains('down'))return;const t=$('#tip');t.innerHTML=`<span class="r">${window.t('ui.enhanced')}</span><b>${window.t('ui.enhCard',{name:ENH[c.enh].name})}</b>${ENH[c.enh].desc}`;t.style.display='block';moveTip(e);});
   if(c.enh)d.addEventListener('mousemove',e=>{if($('#tip').style.display==='block')moveTip(e);});
   return d;
 }
@@ -24,7 +24,7 @@ function flyIn(el){
 }
 async function deal(who,down=false){
   let c;
-  if(who==='p'){if(!S.draw.length){S.draw=shuffle(S.discard);S.discard=[];sfx.shuffle();toast('버린 카드를 다시 섞었습니다');}c=S.draw.pop();S.peek=false;}
+  if(who==='p'){if(!S.draw.length){S.draw=shuffle(S.discard);S.discard=[];sfx.shuffle();toast(t('ui.reshuffle'));}c=S.draw.pop();S.peek=false;}
   else{if(!S.shoe.length)S.shoe=newDeck();c=S.shoe.pop();}
   const el=cardEl(c,down);
   if(who==='p'){S.player.push(c);S.pEls.push(el);$('#pHand').appendChild(el);}

@@ -9,4 +9,4 @@ function saveRec(won){
   if(S.endless)r.endless=Math.max(r.endless||0,S.stage);
   try{localStorage.setItem('lucky21.rec',JSON.stringify(r));}catch(e){}
 }
-function recHtml(){const r=loadRec();if(!r.stage)return'';return`<div class="record">최고 기록 · ${r.stage>8?'<b>클리어</b>':`스테이지 <b>${r.stage}</b>`} · 최고 핸드 <b>${fmt(r.hand)}</b>${r.wins?` · 클리어 <b>${r.wins}</b>회`:''}${r.endless?` · 엔드리스 <b>${r.endless}</b>스테이지`:''}</div>`;}
+function recHtml(){const r=loadRec();if(!r.stage)return'';return`<div class="record">${t('ui.recBest')} · ${r.stage>8?`<b>${t('ui.recClear')}</b>`:t('ui.recStage',{n:r.stage})} · ${t('ui.recHand',{n:fmt(r.hand)})}${r.wins?` · ${t('ui.recWins',{n:r.wins})}`:''}${r.endless?` · ${t('ui.recEndless',{n:r.endless})}`:''}</div>`;}

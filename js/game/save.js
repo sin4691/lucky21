@@ -52,9 +52,9 @@ function resumeRun(){
   $('#pHand').innerHTML='';$('#dHand').innerHTML='';$('#pTot').textContent='';$('#dTot').textContent='';
   if(d.phase==='shop'){renderShop();return;}
   if(d.phase==='clear'){openShop();return;}
-  const bossHtml=S.boss?`<div class="next" style="margin-top:12px"><span class="bn">보스 · ${S.boss.name}</span><br>${S.boss.desc}</div>`:'';
-  openPanel(`<div class="sub">CONTINUE · ${S.stage>8?`ENDLESS STAGE ${S.stage}`:`STAGE ${S.stage} / 8`}</div><h2>이어하기</h2>
-    <p>점수 <b class="gold">${fmt(S.score)}</b> / ${fmt(S.target)} · 남은 횟수 <b>${S.handsLeft}</b> · 골드 <b class="gold">${S.gold}G</b></p>${bossHtml}
-    <div class="actions"><button class="btn" id="goStage">계속하기</button></div>`);
+  const bossHtml=S.boss?`<div class="next" style="margin-top:12px"><span class="bn">${t('ui.bossLabel',{name:S.boss.name})}</span><br>${S.boss.desc}</div>`:'';
+  openPanel(`<div class="sub">CONTINUE · ${S.stage>8?`ENDLESS STAGE ${S.stage}`:`STAGE ${S.stage} / 8`}</div><h2>${t('ui.continueTitle')}</h2>
+    <p>${t('ui.continueInfo',{score:fmt(S.score),target:fmt(S.target),hands:S.handsLeft,gold:S.gold})}</p>${bossHtml}
+    <div class="actions"><button class="btn" id="goStage">${t('ui.continue')}</button></div>`);
   $('#goStage').onclick=()=>{sfx.click();closePanel();startHand();};
 }

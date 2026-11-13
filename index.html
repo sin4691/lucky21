@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>LUCKY 21 — 블랙잭 로그라이크</title>
+<title>LUCKY 21</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=DM+Serif+Display&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
@@ -13,24 +13,24 @@
 <div id="app">
   <aside id="side">
     <div class="logo">LUCKY 21<small>BLACKJACK ROGUELIKE</small></div>
-    <div class="box"><div class="row"><span class="k">스테이지</span><span class="k" id="stageLbl"></span></div><div class="v" id="stageV">1 / 8</div></div>
-    <div class="box" id="bossBox"><div class="k">보스 규칙 · 이번 스테이지만</div><div class="bn" id="bossName"></div><div class="bd" id="bossDesc"></div></div>
-    <div class="box scorebox"><div class="row"><span class="k">점수</span><span class="k">목표 <span class="target" id="targetV">0</span></span></div><div class="v" id="scoreV">0</div><div class="progress"><i id="prog"></i></div></div>
-    <div class="box"><div class="k" style="margin-bottom:6px">이번 핸드</div><div class="cm" id="cmWrap"><div id="cmC">0</div><span class="x">×</span><div id="cmM">0</div></div></div>
+    <div class="box"><div class="row"><span class="k" data-i18n="ui.stage"></span><span class="k" id="stageLbl"></span></div><div class="v" id="stageV">1 / 8</div></div>
+    <div class="box" id="bossBox"><div class="k" data-i18n="ui.bossRule"></div><div class="bn" id="bossName"></div><div class="bd" id="bossDesc"></div></div>
+    <div class="box scorebox"><div class="row"><span class="k" data-i18n="ui.score"></span><span class="k"><span data-i18n="ui.target"></span> <span class="target" id="targetV">0</span></span></div><div class="v" id="scoreV">0</div><div class="progress"><i id="prog"></i></div></div>
+    <div class="box"><div class="k" style="margin-bottom:6px" data-i18n="ui.thisHand"></div><div class="cm" id="cmWrap"><div id="cmC">0</div><span class="x">×</span><div id="cmM">0</div></div></div>
     <div class="stats">
-      <div class="box"><div class="k">남은 횟수</div><div class="v" id="handsV">5</div></div>
-      <div class="box"><div class="k">골드</div><div class="v gold" id="goldV">4</div></div>
-      <div class="box"><div class="k">연승</div><div class="v" id="streakV">0</div></div>
-      <div class="box"><div class="k">최고 핸드</div><div class="v" id="bestV">0</div></div>
+      <div class="box"><div class="k" data-i18n="ui.handsLeft"></div><div class="v" id="handsV">5</div></div>
+      <div class="box"><div class="k" data-i18n="ui.gold"></div><div class="v gold" id="goldV">4</div></div>
+      <div class="box"><div class="k" data-i18n="ui.streak"></div><div class="v" id="streakV">0</div></div>
+      <div class="box"><div class="k" data-i18n="ui.bestHand"></div><div class="v" id="bestV">0</div></div>
     </div>
-    <button id="btnMenu" aria-label="메뉴">☰</button>
+    <button id="btnMenu" data-i18n-aria="ui.menu">☰</button>
     <div id="sideMore">
-    <div class="box"><div class="row"><span class="k">내 덱</span><button class="linkbtn" id="btnDeck">덱 보기</button></div><div class="deckinfo" id="deckInfo"></div></div>
-    <div class="tools"><button id="btnSpeed">속도 1x</button><button id="btnMute">소리 켬</button><button id="btnCol">도감</button><button id="btnHelp">규칙</button></div>
+    <div class="box"><div class="row"><span class="k" data-i18n="ui.myDeck"></span><button class="linkbtn" id="btnDeck" data-i18n="ui.viewDeck"></button></div><div class="deckinfo" id="deckInfo"></div></div>
+    <div class="tools"><button id="btnSpeed" data-i18n="ui.speed1"></button><button id="btnMute" data-i18n="ui.soundOn"></button><button id="btnCol" data-i18n="ui.collection"></button><button id="btnHelp" data-i18n="ui.rules"></button><button id="btnLang" data-i18n="ui.language"></button></div>
     </div>
   </aside>
   <main id="main">
-    <div id="charmHead"><span>부적 <span id="charmCnt">0/5</span></span><span>드래그로 순서 변경 · 왼쪽부터 발동 &nbsp;|&nbsp; H 히트 · S 스탠드 · D 더블</span></div>
+    <div id="charmHead"><span><span data-i18n="ui.charms"></span> <span id="charmCnt">0/5</span></span><span data-i18n="ui.charmHint"></span></div>
     <div id="charmBar"></div>
     <div id="table">
       <svg id="feltText" viewBox="0 0 640 220">
@@ -40,14 +40,14 @@
         <text font-size="14"><textPath href="#arc2" startOffset="50%" text-anchor="middle">CHIPS × MULT · THE HOUSE ALWAYS PAYS</textPath></text>
       </svg>
       <div id="deck"></div><div id="deckCount"></div>
-      <div class="zone" id="dZone"><div class="tag">딜러<b id="dTot"></b></div><div class="hand" id="dHand"></div></div>
+      <div class="zone" id="dZone"><div class="tag"><span data-i18n="ui.dealer"></span><b id="dTot"></b></div><div class="hand" id="dHand"></div></div>
       <div id="banner"><div class="res"></div><div class="pts"></div></div>
-      <div class="zone" id="pZone"><div class="hand" id="pHand"></div><div class="tag">플레이어<b id="pTot"></b></div><div id="bustP"></div></div>
+      <div class="zone" id="pZone"><div class="hand" id="pHand"></div><div class="tag"><span data-i18n="ui.player"></span><b id="pTot"></b></div><div id="bustP"></div></div>
     </div>
     <div id="controls">
-      <button class="btn teal" id="btnHit">히트<small>HIT · H</small></button>
-      <button class="btn" id="btnStand">스탠드<small>STAND · S</small></button>
-      <button class="btn red" id="btnDouble">더블<small>DOUBLE · D</small></button>
+      <button class="btn teal" id="btnHit"><span data-i18n="ui.hit"></span><small>HIT · H</small></button>
+      <button class="btn" id="btnStand"><span data-i18n="ui.stand"></span><small>STAND · S</small></button>
+      <button class="btn red" id="btnDouble"><span data-i18n="ui.double"></span><small>DOUBLE · D</small></button>
     </div>
   </main>
 </div>
@@ -59,6 +59,14 @@
 <div id="confirmWrap"><div class="cbox"><h4 id="cTitle"></h4><p id="cText"></p><div class="actions"><button class="btn small teal" id="cNo"></button><button class="btn small" id="cYes"></button></div></div></div>
 
 <script src="js/core/utils.js"></script>
+<script src="js/core/i18n.js"></script>
+<script src="js/i18n/ko.js"></script>
+<script src="js/i18n/en.js"></script>
+<script src="js/i18n/ja.js"></script>
+<script src="js/i18n/zh-Hant.js"></script>
+<script src="js/i18n/es.js"></script>
+<script src="js/i18n/pt-BR.js"></script>
+<script src="js/i18n/de.js"></script>
 <script src="js/assets.js"></script>
 <script src="js/fx/audio.js"></script>
 <script src="js/game/cards.js"></script>

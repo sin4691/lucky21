@@ -40,8 +40,8 @@ button{font-family:inherit;cursor:pointer}
 #cmWrap.hot #cmM{box-shadow:inset 0 0 18px #1b0703,0 0 22px #ff5a2a88}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .gold{color:var(--gold)}
-.tools{display:flex;gap:6px;margin-top:auto}
-.tools button{flex:1;background:#1b1c18;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:7px 0;font-size:12px;font-weight:700}
+.tools{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.tools button{flex:1 1 30%;white-space:nowrap;background:#1b1c18;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:7px 0;font-size:12px;font-weight:700}
 .tools button:hover{color:var(--cream);border-color:#45463e}
 .bump{animation:bump .22s}
 @keyframes bump{45%{transform:scale(1.14)}}
@@ -481,3 +481,21 @@ hr{border:0;border-top:1px solid var(--line);margin:16px 0}
 .unlock.on{opacity:1;transform:translate(-50%,0)}
 .unlock .k{display:block;font-size:11px;letter-spacing:1px}
 .unlock b{color:var(--gold);font-size:15px}
+
+/* ---------- 언어 선택 ---------- */
+.panel .lang-btn{display:block;width:max-content;margin:-8px -6px 4px auto;font-size:13px}
+.lang-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0 4px}
+.lang-opt{background:#0e0f0c;border:1px solid var(--line);border-radius:10px;color:var(--cream);font-size:15px;font-weight:700;padding:12px 10px}
+.lang-opt.on{border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+
+/* ---------- 일본어·중국어: 한글 전용 제목 글꼴(Black Han Sans) 대신 같은 굵기의 Noto 글꼴 ---------- */
+html:lang(ja) body{font-family:'Noto Sans JP','Noto Sans KR',system-ui,sans-serif}
+html:lang(zh-Hant) body{font-family:'Noto Sans TC','Noto Sans KR',system-ui,sans-serif}
+html:lang(ja) :is(.v,.cm>div,.cm .x,.tag b,#banner .res,#banner .pts,.panel h2,.ptable div b,.reward .ln b,.purse,.unlock b),
+html:lang(ja) .panel h1:not(.brand){font-family:'Noto Sans JP',sans-serif;font-weight:900}
+html:lang(zh-Hant) :is(.v,.cm>div,.cm .x,.tag b,#banner .res,#banner .pts,.panel h2,.ptable div b,.reward .ln b,.purse,.unlock b),
+html:lang(zh-Hant) .panel h1:not(.brand){font-family:'Noto Sans TC',sans-serif;font-weight:900}
+html:lang(ja) .logo small,html:lang(zh-Hant) .logo small{font-family:inherit}
+
+/* 번역 문장이 길어도 상점 카드·트릭 칸의 버튼 글자가 잘리지 않게 */
+:is(#cardOffers,#trickOffers) .btn{white-space:normal;line-height:1.15;letter-spacing:0;padding-left:4px;padding-right:4px;max-width:100%}

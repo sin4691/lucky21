@@ -19,7 +19,7 @@ function onBack(){
     if(closer){closer.click();return;}
   }
   const saved=S&&!S.demo&&loadSave();
-  confirmBox('게임을 종료할까요?',S&&S.demo?'데모 모드는 저장되지 않아요.':saved?'진행 상황은 저장돼 있어요. 다시 켜면 타이틀에서 이어할 수 있어요.':'',
-    '종료','계속하기',()=>{if(CapApp&&CapApp.exitApp)CapApp.exitApp();});
+  confirmBox(t('ui.exitQ'),S&&S.demo?t('ui.exitDemo'):saved?t('ui.exitSaved'):'',
+    t('ui.exit'),t('ui.continue'),()=>{if(CapApp&&CapApp.exitApp)CapApp.exitApp();});
 }
 if(CapApp&&CapApp.addListener)CapApp.addListener('backButton',onBack);

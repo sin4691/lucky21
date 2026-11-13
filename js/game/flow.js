@@ -4,17 +4,17 @@
 /* ---------------- flow ---------------- */
 function startStage(){
   S.boss=S.nextBoss;S.target=targetOf(S.stage);S.handNo=0;
-  if(hasCharm('magician')&&S.tricks.length<2){const t=rnd(TRICKS);S.tricks.push(t);discover('tricks',t.id);setTimeout(()=>toast(`마술사의 모자: ${t.name} 획득`),300);}
+  if(hasCharm('magician')&&S.tricks.length<2){const t=rnd(TRICKS);S.tricks.push(t);discover('tricks',t.id);setTimeout(()=>toast(window.t('ui.magician',{name:t.name})),300);}
   if(S.boss)discover('bosses',S.boss.id);
   achEvent('stage');
   S.handsLeft=baseHands();S.score=0;S.draw=shuffle([...S.myDeck]);S.discard=[];S.shoe=newDeck();S.insuranceUsed=false;
   S.player=[];S.dealer=[];S.pEls=[];S.dEls=[];
   $('#pHand').innerHTML='';$('#dHand').innerHTML='';$('#pTot').textContent='';$('#dTot').textContent='';
   renderSide();renderCharms();setCM(0,0);
-  const bossHtml=S.boss?`<div class="next" style="margin-top:12px"><span class="bn">보스 · ${S.boss.name}</span><br>${S.boss.desc}</div>`:'';
-  openPanel(`<div class="sub">${S.stage>8?`ENDLESS · STAGE ${S.stage}`:`STAGE ${S.stage} / 8`}</div><h2>${S.boss?'보스 스테이지':'스테이지 '+S.stage}</h2>
-    <p>핸드 <b>${S.handsLeft}</b>번 안에 <b class="gold">${fmt(S.target)}</b>점을 넘기세요.</p>${bossHtml}
-    <div class="actions"><button class="btn" id="goStage">딜 시작</button></div>`);
+  const bossHtml=S.boss?`<div class="next" style="margin-top:12px"><span class="bn">${t('ui.bossLabel',{name:S.boss.name})}</span><br>${S.boss.desc}</div>`:'';
+  openPanel(`<div class="sub">${S.stage>8?`ENDLESS · STAGE ${S.stage}`:`STAGE ${S.stage} / 8`}</div><h2>${S.boss?t('ui.bossStage'):t('ui.stageN',{n:S.stage})}</h2>
+    <p>${t('ui.stageGoal',{hands:S.handsLeft,target:fmt(S.target)})}</p>${bossHtml}
+    <div class="actions"><button class="btn" id="goStage">${t('ui.deal')}</button></div>`);
   $('#goStage').onclick=()=>{sfx.click();sfx.shuffle();closePanel();startHand();};
   snapshot('hand');
 }
@@ -31,9 +31,9 @@ async function startHand(){
   if(d===21)return finish('lose');
   S.busy=false;updateButtons();
   await tutStep('play',[
-    {target:['#pHand','#bustP'],title:'목표: 딜러보다 21에 가깝게',html:`내 카드 합이 <b>21을 넘으면 버스트</b>로 바로 져요. 아래 <b>버스트 확률</b>은 남은 내 덱을 기준으로 다음 카드에 21을 넘을 확률이에요.`},
-    {target:['#dHand','#dTot'],title:'딜러는 규칙대로만 움직여요',html:`딜러는 카드 1장을 숨기고 시작해서, <b>17 이상이 될 때까지</b> 무조건 카드를 받아요. 딜러가 21을 넘기면 내가 이겨요.`},
-    {target:'#controls',title:'이번 판은 직접 결정하세요',html:`<b>히트</b>: 한 장 더 받기 · <b>스탠드</b>: 지금 합으로 승부 · <b>더블</b>: 첫 두 장일 때 딱 한 장만 더 받고, 이기면 점수 2배. 키보드 H / S / D도 돼요.`},
+    {target:['#pHand','#bustP'],title:t('tut.goalT'),html:t('tut.goal')},
+    {target:['#dHand','#dTot'],title:t('tut.dealerT'),html:t('tut.dealer')},
+    {target:'#controls',title:t('tut.ctrlT'),html:t('tut.ctrl')},
   ]);
 }
 async function onHit(){
@@ -43,7 +43,7 @@ async function onHit(){
 async function onStand(){if(S.busy||S.coaching)return;S.busy=true;updateButtons();sfx.click();dealerTurn();}
 async function onDouble(){
   if(S.busy||S.coaching||S.player.length!==2||S.boss?.id==='nodouble')return;S.busy=true;S.doubled=true;updateButtons();
-  pop($('#btnDouble'),'더블다운!','xmult',-10);sfx.xmult();
+  pop($('#btnDouble'),t('ui.doubleDown'),'xmult',-10);sfx.xmult();
   await deal('p');
   if(total(S.player).t>21)return finish('bust');
   dealerTurn();
@@ -65,21 +65,21 @@ async function useTrick(i){
   const myTurn=!S.busy&&S.player.length>=2;
   const el=document.querySelector(`#charmBar .trick[data-id="${t.id}"]`);
   const consume=msg=>{S.tricks.splice(i,1);hideTip();renderCharms();sfx.buy();if(el)pop(el,msg,'info');};
-  if(t.id==='stall'){if(S.busy&&S.player.length){toast('핸드가 끝난 뒤에 쓸 수 있어요');return;}S.handsLeft++;renderSide();consume('핸드 +1');return;}
-  if(!myTurn){toast('내 차례(히트/스탠드 선택 중)에 쓸 수 있어요');return;}
+  if(t.id==='stall'){if(S.busy&&S.player.length){toast(window.t('ui.stallAfter'));return;}S.handsLeft++;renderSide();consume(window.t('ui.handPlus'));return;}
+  if(!myTurn){toast(window.t('ui.myTurnOnly'));return;}
   if(!S.draw.length){S.draw=shuffle(S.discard);S.discard=[];}
-  if(t.id==='peek'){S.peek=true;consume('다음 카드 공개');updateButtons();return;}
+  if(t.id==='peek'){S.peek=true;consume(window.t('ui.peekUsed'));updateButtons();return;}
   if(t.id==='ten'){
     const idx=S.draw.findIndex(c=>rankVal(c)===10);
-    if(idx<0){toast('남은 덱에 10계열 카드가 없어요');return;}
-    const [c]=S.draw.splice(idx,1);S.draw.push(c);S.peek=true;consume('다음 카드 = 10');updateButtons();return;
+    if(idx<0){toast(window.t('ui.noTens'));return;}
+    const [c]=S.draw.splice(idx,1);S.draw.push(c);S.peek=true;consume(window.t('ui.tenUsed'));updateButtons();return;
   }
   if(t.id==='mulligan'){
-    if(S.player.length!==2){toast('첫 두 장일 때만 쓸 수 있어요');return;}
-    consume('다시 딜');S.busy=true;updateButtons();startHand();return;
+    if(S.player.length!==2){toast(window.t('ui.firstTwoOnly'));return;}
+    consume(window.t('ui.redeal'));S.busy=true;updateButtons();startHand();return;
   }
   if(t.id==='swap'){
-    consume('바꿔치기');S.busy=true;updateButtons();
+    consume(window.t('ui.swapUsed'));S.busy=true;updateButtons();
     const c=S.player.pop(),cel=S.pEls.pop();S.discard.push(c);
     cel.classList.add('leave');await sleep(280);cel.remove();updateTotals();
     await deal('p');return afterPlayerDraw();
@@ -88,7 +88,7 @@ async function useTrick(i){
 async function afterPlayerDraw(){
   const t=total(S.player).t;
   if(t>21)return finish('bust');
-  if(hasCharm('charlie')&&S.player.length>=5){await charmFlash('charlie','찰리!');return finish('charlie');}
+  if(hasCharm('charlie')&&S.player.length>=5){await charmFlash('charlie',window.t('ui.charlie'));return finish('charlie');}
   if(t===21)return dealerTurn();
   S.busy=false;updateButtons();
 }
@@ -97,7 +97,7 @@ async function charmFlash(id,text){
   el.classList.remove('trig');void el.offsetWidth;el.classList.add('trig');pop(el,text,'info',-6);sfx.gold();await sleep(520);
 }
 function showBanner(result){
-  const b=$('#banner');b.className='';b.querySelector('.res').textContent=RESULT_TXT[result];b.querySelector('.pts').textContent='';
+  const b=$('#banner');b.className='';b.querySelector('.res').textContent=t('res.'+result);b.querySelector('.pts').textContent='';
   void b.offsetWidth;b.classList.add('on',WIN_SET.has(result)?'win':result==='push'?'push':'lose');
 }
 function hideBanner(){$('#banner').classList.remove('on');}
@@ -105,9 +105,9 @@ function hideBanner(){$('#banner').classList.remove('on');}
 async function finish(result){
   S.busy=true;updateButtons();
   await reveal();
-  if(result==='bust'&&hasCharm('insure')&&!S.insuranceUsed){S.insuranceUsed=true;showBanner('bust');await charmFlash('insure','보험 발동!');result='push';}
-  if(result==='push'&&hasCharm('pushmaster')){showBanner('push');await charmFlash('pushmaster','푸시 → 승리');result='win';}
-  if(result==='bj'&&S.boss?.id==='nobj'){showBanner('bj');await sleep(400);toast('블랙잭 금지령: 일반 승리로 처리');result='win';}
+  if(result==='bust'&&hasCharm('insure')&&!S.insuranceUsed){S.insuranceUsed=true;showBanner('bust');await charmFlash('insure',t('ui.insured'));result='push';}
+  if(result==='push'&&hasCharm('pushmaster')){showBanner('push');await charmFlash('pushmaster',t('ui.pushWin'));result='win';}
+  if(result==='bj'&&S.boss?.id==='nobj'){showBanner('bj');await sleep(400);toast(t('ui.nobjToast'));result='win';}
   showBanner(result);
   if(WIN_SET.has(result)){S.streak++;}else if(result!=='push'){S.streak=0;}
   if(result==='bj')burst(innerWidth/2,innerHeight/2,50,['#e8c46a','#fff','#7fe0d4'],8);
@@ -117,10 +117,8 @@ async function finish(result){
   S.handsLeft--;S.handNo++;renderSide();
   const box=$('#cmWrap').closest('.box');
   await tutStep('score',[
-    {target:box,title:'점수 = 칩 × 배수',html:WIN_SET.has(result)||result==='push'
-      ?`이기면 <span class="c">칩</span>(내 카드 숫자의 합)에 <span class="m">배수</span>를 곱한 만큼 점수가 들어와요. 기본 배수는 승리 2, 블랙잭 4예요.`
-      :`졌을 땐 점수가 없어요. 이기면 <span class="c">칩</span>(내 카드 숫자의 합)에 <span class="m">배수</span>를 곱한 만큼 점수가 들어와요. 기본 배수는 승리 2, 블랙잭 4예요.`},
-    {target:'.scorebox',title:'남은 횟수 안에 목표 점수 넘기기',html:`스테이지마다 <b>${baseHands()}번</b> 플레이할 수 있어요. 그 안에 목표 점수를 넘기면 클리어하고, 남은 횟수는 골드로 바뀌어요.`},
+    {target:box,title:t('tut.scoreT'),html:WIN_SET.has(result)||result==='push'?t('tut.scoreWin'):t('tut.scoreLose')},
+    {target:'.scorebox',title:t('tut.handsT'),html:t('tut.hands',{n:baseHands()})},
   ]);
   await sleep(650);
   if(S.score>=S.target)return stageClear();
@@ -136,7 +134,7 @@ async function scoreHand(result){
   const ctx={result,cards:S.player,dealer:S.dealer,total:total(S.player).t,dealerTotal:total(S.dealer).t,doubled:S.doubled,lastHand:S.handsLeft===1,streak:S.streak,soft:total(S.player).soft&&total(S.player).t<=21,firstHand:S.handNo===0};
   const apply=(e,el)=>{
     if(e.chips){chips+=e.chips;pop(el,`+${e.chips}`,'chip');sfx.chip();}
-    if(e.mult){mult+=e.mult;pop(el,`+${e.mult} 배수`,'mult');sfx.mult();}
+    if(e.mult){mult+=e.mult;pop(el,t('ui.plusMult',{n:e.mult}),'mult');sfx.mult();}
     if(e.xmult){mult*=e.xmult;pop(el,`×${e.xmult}`,'xmult');sfx.xmult();shake(false);}
     if(e.gold){S.gold+=e.gold;pop(el,`+${e.gold}G`,'gold',-26);sfx.gold();renderSide();}
     if(e.note){pop(el,e.note,'info',-26);sfx.gold();}
@@ -146,7 +144,7 @@ async function scoreHand(result){
   // ---- 패배 루트 ----
   if(!win&&!push){
     sfx.lose();shake(false);setCM(0,0);await sleep(350);
-    if(S.boss?.id==='tax'&&S.gold>0){S.gold--;pop($('#goldV'),'-1G 세금','mult');renderSide();await sleep(300);}
+    if(S.boss?.id==='tax'&&S.gold>0){S.gold--;pop($('#goldV'),t('ui.tax'),'mult');renderSide();await sleep(300);}
     for(const ch of S.charms){
       if(!ch.onLose)continue;const e=ch.onLose(ctx,ch);if(!e)continue;
       apply(e,trigCharm(ch.id)||$('#cmM'));await sleep(380);
@@ -190,13 +188,13 @@ async function scoreHand(result){
     }
   }
   // 3) 더블
-  if(S.doubled){mult*=2;pop($('#cmM'),'더블 ×2','xmult');sfx.xmult();setCM(chips,mult);await sleep(380);}
+  if(S.doubled){mult*=2;pop($('#cmM'),t('ui.doubleX2'),'xmult');sfx.xmult();setCM(chips,mult);await sleep(380);}
   // 4) 유리 파괴
   const broken=S.player.map((c,i)=>[c,S.pEls[i]]).filter(([c])=>c.broken);
   for(const [c,el] of broken){
     S.myDeck=S.myDeck.filter(x=>x.id!==c.id);
     const p=center(el);burst(p.x,p.y,40,['#dff6ff','#9fd8ea','#ffffff'],7);noise(.25,.25,5000);
-    pop(el,'유리 카드 파괴','info',-20);el.classList.add('shatter');await sleep(420);
+    pop(el,t('ui.glassBroke'),'info',-20);el.classList.add('shatter');await sleep(420);
   }
   return award(chips,mult);
 }

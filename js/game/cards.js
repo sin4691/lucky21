@@ -11,10 +11,10 @@ function newDeck(){const d=[];for(const s of SUITS)for(const r of RANKS)d.push(m
 const SUIT_ORDER={'♠':0,'♥':1,'♦':2,'♣':3},RANK_ORDER=Object.fromEntries(RANKS.map((r,i)=>[r,i]));
 const sortCards=a=>[...a].sort((x,y)=>SUIT_ORDER[x.s]-SUIT_ORDER[y.s]||RANK_ORDER[x.r]-RANK_ORDER[y.r]);
 const ENH={
-  gold:{name:'금박',tag:'金',desc:'이긴 핸드에서 배수 +4'},
-  glass:{name:'유리',tag:'琉',desc:'이긴 핸드에서 배수 ×2, 25% 확률로 깨져 덱에서 사라짐'},
-  gem:{name:'보석',tag:'寶',desc:'이긴 핸드에서 칩 +30'},
-  lucky:{name:'행운',tag:'福',desc:'이긴 핸드에서 20% 확률 배수 +20, 15% 확률 골드 +4'},
+  gold:{tag:'金'},
+  glass:{tag:'琉'},
+  gem:{tag:'寶'},
+  lucky:{tag:'福'},
 };
 const ENH_KEYS=Object.keys(ENH);
 function rankVal(c){if(c.r==='A')return 11;if(isFace(c))return 10;return +c.r;}
@@ -26,5 +26,4 @@ function chipValue(c){
   return rankVal(c);
 }
 
-const RESULT_TXT={bj:'블랙잭!',win:'승리',dealerbust:'딜러 버스트!',charlie:'다섯 장 찰리!',push:'푸시',lose:'패배',bust:'버스트'};
 const WIN_SET=new Set(['bj','win','dealerbust','charlie']);

@@ -23,10 +23,10 @@ function renderDeckInfo(){
   const pile=S.draw;const cnt=s=>pile.filter(c=>c.s===s).length;
   const tens=pile.filter(c=>rankVal(c)===10).length,aces=pile.filter(c=>c.r==='A').length,low=pile.filter(c=>{const v=rankVal(c);return v>=2&&v<=6;}).length;
   const enh=S.myDeck.filter(c=>c.enh).length;
-  $('#deckInfo').innerHTML=`전체 <b>${S.myDeck.length}</b>장 · 남은 <b>${pile.length}</b>장${enh?` · 강화 ${enh}`:''}<br>
-    10계열 ${tens} · A ${aces} · 2~6 ${low}<br>
+  $('#deckInfo').innerHTML=`${t('ui.deckInfo',{all:S.myDeck.length,left:pile.length,enh:enh?t('ui.deckInfoEnh',{n:enh}):''})}<br>
+    ${t('ui.deckInfo2',{tens,aces,low})}<br>
     <span class="suits"><span>♠${cnt('♠')}</span><span class="rd">♥${cnt('♥')}</span><span class="rd">♦${cnt('♦')}</span><span>♣${cnt('♣')}</span></span>`;
-  $('#deckCount').textContent=`딜러 덱 ${S.shoe.length}`;
+  $('#deckCount').textContent=t('ui.dealerDeck',{n:S.shoe.length});
 }
 function bustChance(){
   const pile=remainingPile();if(!pile.length)return 0;
@@ -35,16 +35,16 @@ function bustChance(){
 function renderBust(){
   const el=$('#bustP');
   if(S.busy||!S.player.length){el.classList.remove('on');return;}
-  if(S.peek&&S.draw.length){const c=S.draw[S.draw.length-1],t=total([...S.player,c]).t;
-    el.textContent=`다음 카드 ${c.s}${c.r} · 히트하면 ${t}${t>21?' (버스트)':''}`;el.className='on'+(t>21?' hi':'');return;}
-  const p=bustChance();el.textContent=`다음 히트 버스트 확률 ${Math.round(p*100)}%`;
+  if(S.peek&&S.draw.length){const c=S.draw[S.draw.length-1],tt=total([...S.player,c]).t;
+    el.textContent=t('ui.nextCard',{card:c.s+c.r,t:tt})+(tt>21?t('ui.bustSuffix'):'');el.className='on'+(tt>21?' hi':'');return;}
+  const p=bustChance();el.textContent=t('ui.bustChance',{p:Math.round(p*100)});
   el.className='on'+(p>=.5?' hi':p>=.25?' mid':'');
 }
 function renderCharms(){
   const bar=$('#charmBar');bar.innerHTML='';
   S.charms.forEach((ch,i)=>{
     const el=charmEl(ch);el.draggable=true;
-    el.addEventListener('dragstart',e=>{if(S.busy&&!$('#overlay').classList.contains('on')&&S.player.length){e.preventDefault();toast('핸드 진행 중에는 순서를 바꿀 수 없어요');return;}e.dataTransfer.setData('text/plain',String(i));el.classList.add('dragging');hideTip();});
+    el.addEventListener('dragstart',e=>{if(S.busy&&!$('#overlay').classList.contains('on')&&S.player.length){e.preventDefault();toast(t('ui.noReorder'));return;}e.dataTransfer.setData('text/plain',String(i));el.classList.add('dragging');hideTip();});
     el.addEventListener('dragend',()=>el.classList.remove('dragging'));
     el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('over');});
     el.addEventListener('dragleave',()=>el.classList.remove('over'));
@@ -52,7 +52,7 @@ function renderCharms(){
     bar.appendChild(el);
   });
   for(let i=S.charms.length;i<5;i++){const d=document.createElement('div');d.className='slot';bar.appendChild(d);}
-  const sep=document.createElement('div');sep.className='trick-sep';sep.innerHTML='<span>트릭</span>';bar.appendChild(sep);
+  const sep=document.createElement('div');sep.className='trick-sep';sep.innerHTML=`<span>${t('ui.trick')}</span>`;bar.appendChild(sep);
   for(let i=0;i<2;i++){
     const t=S.tricks[i];
     if(t){const el=trickEl(t);el.onclick=()=>useTrick(i);bar.appendChild(el);}
@@ -71,7 +71,7 @@ function trickEl(t){
   const d=document.createElement('div');d.className='trick';d.dataset.id=t.id;
   d.innerHTML=`<div class="glyph">${t.glyph}</div><div class="cname">${t.name}</div>`;
   if(ART.tricks[t.id]){d.classList.add('has-art');d.style.backgroundImage=`url(${ART.tricks[t.id]})`;}
-  d.addEventListener('mouseenter',e=>{const tp=$('#tip');tp.innerHTML=`<span class="r">트릭 카드 · 1회용</span><b>${t.name}</b>${t.desc}`;tp.style.display='block';moveTip(e);});
+  d.addEventListener('mouseenter',e=>{const tp=$('#tip');tp.innerHTML=`<span class="r">${window.t('ui.trickOnce')}</span><b>${t.name}</b>${t.desc}`;tp.style.display='block';moveTip(e);});
   d.addEventListener('mousemove',moveTip);d.addEventListener('mouseleave',hideTip);
   return d;
 }
@@ -89,7 +89,7 @@ function updateButtons(){
 }
 function updateTotals(){
   const p=total(S.player);
-  $('#pTot').textContent=S.player.length?(p.soft&&p.t<21?`소프트 ${p.t}`:p.t):'';
+  $('#pTot').textContent=S.player.length?(p.soft&&p.t<21?t('ui.soft',{n:p.t}):p.t):'';
   if(!S.dealer.length){$('#dTot').textContent='';return;}
   if(S.holeRevealed){$('#dTot').textContent=total(S.dealer).t;}
   else if(S.boss?.id==='masked'){$('#dTot').textContent='? + ?';}

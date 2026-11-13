@@ -35,12 +35,12 @@ function coach({target,title,html},i,n){
       else y=Math.max(8,innerHeight-bh-8);
       box.style.left=x+'px';box.style.top=y+'px';
     };
-    box.innerHTML=`<div class="step">튜토리얼 ${i+1} / ${n}</div><h4>${title}</h4><p>${html}</p>
-      <div class="row2"><button class="skip" id="coachSkip">튜토리얼 끄기</button><button class="btn" id="coachOk">${i+1<n?'다음':'알겠어요'}</button></div>`;
+    box.innerHTML=`<div class="step">${t('ui.tutStep',{i:i+1,n})}</div><h4>${title}</h4><p>${html}</p>
+      <div class="row2"><button class="skip" id="coachSkip">${t('ui.tutOff')}</button><button class="btn" id="coachOk">${i+1<n?t('ui.next'):t('ui.gotIt')}</button></div>`;
     box.style.display='block';cat.style.display='block';place();requestAnimationFrame(place);
     const onR=()=>place();addEventListener('resize',onR);
     const close=()=>{removeEventListener('resize',onR);box.style.display='none';spot.style.display='none';cat.style.display='none';S.coaching=false;sfx.click();res();};
     $('#coachOk').onclick=close;
-    $('#coachSkip').onclick=()=>{S.tut=false;setTutDone(true);close();toast('튜토리얼을 껐어요. 규칙 화면에서 다시 켤 수 있어요');};
+    $('#coachSkip').onclick=()=>{S.tut=false;setTutDone(true);close();toast(t('ui.tutOffToast'));};
   });
 }

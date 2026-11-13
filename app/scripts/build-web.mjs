@@ -23,6 +23,9 @@ const FONT_CSS = [
   ['@fontsource/black-han-sans', ['index.css']],
   ['@fontsource/dm-serif-display', ['index.css']],
   ['@fontsource/noto-sans-kr', ['400.css', '700.css', '900.css']],
+  // 일본어·중국어(번체): 용량을 줄이려고 두 굵기만 넣는다 (굵은 글씨 700은 900으로 대신 표시)
+  ['@fontsource/noto-sans-jp', ['400.css', '900.css']],
+  ['@fontsource/noto-sans-tc', ['400.css', '900.css']],
 ];
 const imports = [];
 let copied = 0;

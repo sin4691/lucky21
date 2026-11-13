@@ -35,36 +35,36 @@ addEventListener('resize',()=>{if($('#overlay').classList.contains('on'))fitPane
 function closePanel(){$('#overlay').classList.remove('on');document.body.classList.remove('locked');}
 function rulesHtml(){
   return `<div class="rules">
-    <div><b>딜러를 이기세요.</b> 이기면 손패의 카드 칩을 모두 더하고, 그 값에 배수를 곱한 만큼 점수를 얻어요. 기본 배수는 승리 2, 블랙잭 4.</div>
-    <div><b>목표 점수.</b> 스테이지마다 정해진 횟수(기본 5번) 안에 목표를 넘겨야 다음으로 갈 수 있어요. 8 스테이지를 깨면 승리.</div>
-    <div><b>부적.</b> 상점에서 최대 5개까지 장착해요. 칩, 배수, ×배수를 더해 점수 공식을 비틀어요. 발동 순서는 왼쪽부터예요. 장착해 두는 동안 계속 적용돼요.</div>
-    <div><b>내 덱.</b> 플레이어는 자기 덱에서 뽑고, 딜러는 따로 섞은 덱을 써요. 상점에서 카드를 추가·강화·제거해서 덱을 만들어요. 덱 변경은 게임이 끝날 때까지 유지돼요.</div>
-    <div><b>보스.</b> 3·6·8 스테이지에는 규칙을 비트는 보스 10종 중 하나가 붙어요. 보스 규칙은 그 스테이지에서만 적용돼요.</div>
-    <div><b>버스트 확률.</b> 남은 내 덱 기준으로 다음 히트의 버스트 확률이 표시돼요. 판단은 직접!</div>
-    <div><b>트릭 카드.</b> 상점에서 사는 1회용 카드예요. 최대 2장, 부적 칸 오른쪽에서 눌러서 써요. 다음 카드 미리보기, 바꿔치기 등.</div>
-    <div><b>엔드리스.</b> 8스테이지를 깨면 계속 이어서 할 수 있어요. 목표가 계속 오르고 2스테이지마다 보스가 나와요.</div>
+    ${['beat','target','charms','deck','boss','bust','trick','endless'].map(k=>`<div>${t('rules.'+k)}</div>`).join('')}
   </div>
   <div class="ptable">
-    <div>승리<b><span class="c">칩</span> × <span class="m">2</span></b></div>
-    <div>블랙잭<b><span class="c">칩</span> × <span class="m">4</span></b></div>
-    <div>푸시<b><span class="c">칩</span> × <span class="m">1</span></b></div>
-    <div>더블다운<b><span class="m">최종 ×2</span></b></div>
+    ${[['win',2],['bj',4],['push',1]].map(([k,m])=>`<div>${t('rules.'+k)}<b><span class="c">${t('rules.chips')}</span> × <span class="m">${m}</span></b></div>`).join('')}
+    <div>${t('rules.dd')}<b><span class="m">${t('rules.final2')}</span></b></div>
   </div>
-  <p style="font-size:12.5px;color:var(--muted)">카드 칩: 숫자는 그대로, 그림카드 10, 에이스 11. 딜러는 17 이상에서 스탠드합니다.</p>`;
+  <p style="font-size:12.5px;color:var(--muted)">${t('rules.cardChips')}</p>`;
+}
+// 언어 선택. 고르면 저장하고 새로고침해서 모든 글을 다시 그린다 (진행 중인 판은 마지막 저장 지점에서 이어짐).
+function openLangPicker(back){
+  openPanel(`<div class="sub">LANGUAGE</div><h2>${t('ui.language')}</h2>
+    <div class="lang-grid">${LANGS.map(([c,n])=>`<button class="lang-opt${c===LANG?' on':''}" data-lang="${c}">${n}</button>`).join('')}</div>
+    <div class="actions"><button class="btn small" id="langClose">${t('ui.close')}</button></div>`,'lang');
+  document.querySelectorAll('.lang-opt').forEach(b=>b.onclick=()=>{sfx.click();if(b.dataset.lang===LANG){back?back():closePanel();return;}setLang(b.dataset.lang);});
+  $('#langClose').onclick=()=>{sfx.click();back?back():closePanel();};
 }
 function title(){
   const sv=loadSave();
   newRun();renderSide();renderCharms();$('.logo').innerHTML='LUCKY 21<small>BLACKJACK ROGUELIKE</small>';
-  openPanel(`<h1>LUCKY 21</h1><div class="sub">BLACKJACK ROGUELIKE</div>
+  openPanel(`<button class="linkbtn lang-btn" id="titleLang">🌐 ${LANGS.find(l=>l[0]===LANG)[1]}</button><h1 class="brand">LUCKY 21</h1><div class="sub">BLACKJACK ROGUELIKE</div>
     <ul class="pitch">
-      <li><b>딜러를 이기면</b> 카드 칩 × 배수만큼 점수</li>
-      <li><b>부적과 카드</b>로 나만의 덱과 점수 공식 만들기</li>
-      <li><b>8 스테이지</b>의 목표 점수를 모두 넘기면 승리</li>
+      <li>${t('title.p1')}</li>
+      <li>${t('title.p2')}</li>
+      <li>${t('title.p3')}</li>
     </ul>
-    <p class="pitch-note">처음이면 플레이하면서 하나씩 알려 드려요. 전체 규칙은 언제든 <b>규칙</b> 버튼에서 볼 수 있어요.</p>
+    <p class="pitch-note">${t('title.note')}</p>
     <div class="actions" style="justify-content:space-between">${recHtml()||'<span></span>'}
-      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end"><button class="btn teal" id="demo">데모 모드<small>빌드 완성 상태로 시작</small></button>${sv?`<button class="btn" id="cont">이어하기<small>STAGE ${sv.stage}${sv.phase==='shop'||sv.phase==='clear'?' · 상점':''}</small></button>`:''}<button class="btn" id="go">${sv?'새 게임':'게임 시작'}<small>NEW RUN</small></button></div></div>`,'title');
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end"><button class="btn teal" id="demo">${t('title.demo')}<small>${t('title.demoSub')}</small></button>${sv?`<button class="btn" id="cont">${t('title.cont')}<small>STAGE ${sv.stage}${sv.phase==='shop'||sv.phase==='clear'?t('title.shop'):''}</small></button>`:''}<button class="btn" id="go">${sv?t('title.newGame'):t('title.start')}<small>NEW RUN</small></button></div></div>`,'title');
   if(sv)$('#cont').onclick=()=>{ac();sfx.click();resumeRun();};
+  $('#titleLang').onclick=()=>{sfx.click();openLangPicker(title);};
   $('#go').onclick=()=>{ac();sfx.click();openDeckSelect(sv);};
   $('#demo').onclick=()=>{ac();sfx.click();setupDemo();startStage();};
 }
@@ -79,19 +79,19 @@ function setupDemo(){
 }
 function gameOver(){
   hideBanner();sfx.lose();saveRec(false);clearSave();
-  openPanel(`<div class="sub">BANKRUPT</div><h1 style="color:#ff8a70">파산</h1>
-    <p>${S.endless?'엔드리스 ':''}스테이지 <b>${S.stage}</b>에서 <b>${fmt(S.score)}</b> / ${fmt(S.target)}점으로 멈췄어요.</p>
-    <p>최고 핸드 <b class="gold">${fmt(S.bestHand)}</b> · 부적 ${S.charms.map(c=>c.name).join(', ')||'없음'}</p>
-    <div class="actions"><button class="btn" id="again">다시 하기</button></div>`);
+  openPanel(`<div class="sub">BANKRUPT</div><h1 style="color:#ff8a70">${t('end.bankrupt')}</h1>
+    <p>${t('end.stoppedAt',{endless:S.endless?t('end.endlessPre'):'',n:S.stage,score:fmt(S.score),target:fmt(S.target)})}</p>
+    <p>${t('end.best',{n:fmt(S.bestHand),charms:S.charms.map(c=>c.name).join(', ')||t('end.none')})}</p>
+    <div class="actions"><button class="btn" id="again">${t('end.again')}</button></div>`);
   $('#again').onclick=()=>{sfx.click();title();};
 }
 function victory(){
   sfx.big();saveRec(true);clearSave();
   for(let i=0;i<5;i++)setTimeout(()=>burst(Math.random()*innerWidth,innerHeight*.3,60,['#e8c46a','#fff3c4','#7fe0d4','#e6a3ff'],10),i*250);
-  openPanel(`<div class="sub">ALL 8 STAGES CLEARED</div><h1>하우스를 털었다</h1>
-    <p>최고 핸드 <b class="gold">${fmt(S.bestHand)}</b>점 · 마지막 부적: ${S.charms.map(c=>c.name).join(', ')||'없음'}</p>
-    <p style="font-size:13px">엔드리스로 계속하면 목표 점수가 스테이지마다 1.6배씩 오르고, 2스테이지마다 보스가 나와요.</p>
-    <div class="actions"><button class="btn teal" id="endless">엔드리스로 계속<small>ENDLESS</small></button><button class="btn" id="again">한 판 더<small>NEW RUN</small></button></div>`);
+  openPanel(`<div class="sub">ALL 8 STAGES CLEARED</div><h1>${t('end.win')}</h1>
+    <p>${t('end.winBest',{n:fmt(S.bestHand),charms:S.charms.map(c=>c.name).join(', ')||t('end.none')})}</p>
+    <p style="font-size:13px">${t('end.endlessNote')}</p>
+    <div class="actions"><button class="btn teal" id="endless">${t('end.endless')}<small>ENDLESS</small></button><button class="btn" id="again">${t('end.oneMore')}<small>NEW RUN</small></button></div>`);
   $('#again').onclick=()=>{sfx.click();title();};
   $('#endless').onclick=()=>{sfx.click();S.endless=true;stageClear();};
 }
