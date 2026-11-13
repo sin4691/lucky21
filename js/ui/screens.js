@@ -35,19 +35,19 @@ addEventListener('resize',()=>{if($('#overlay').classList.contains('on'))fitPane
 function closePanel(){$('#overlay').classList.remove('on');document.body.classList.remove('locked');}
 function rulesHtml(){
   return `<div class="rules">
-    <div><b>딜러를 이기세요.</b> 이기면 손패의 카드 칩을 모두 더하고, 그 값에 배수를 곱한 만큼 점수를 얻어요.</div>
-    <div><b>목표 점수.</b> 스테이지마다 정해진 핸드 안에 목표를 넘겨야 다음으로 갈 수 있어요. 8 스테이지를 깨면 승리.</div>
-    <div><b>부적.</b> 상점에서 최대 5개까지 장착해요. 칩, 배수, ×배수를 더해 점수 공식을 비틀어요. 발동 순서는 왼쪽부터예요.</div>
-    <div><b>내 덱.</b> 플레이어는 자기 덱에서 뽑고, 딜러는 따로 섞은 덱을 써요. 상점에서 카드를 추가·강화·제거해서 덱을 만들어요.</div>
-    <div><b>보스.</b> 3·6·8 스테이지에는 규칙을 비트는 보스 10종 중 하나가 붙어요. 상점에서 미리 확인할 수 있어요.</div>
+    <div><b>딜러를 이기세요.</b> 이기면 손패의 카드 칩을 모두 더하고, 그 값에 배수를 곱한 만큼 점수를 얻어요. 기본 배수는 승리 2, 블랙잭 4.</div>
+    <div><b>목표 점수.</b> 스테이지마다 정해진 횟수(기본 5번) 안에 목표를 넘겨야 다음으로 갈 수 있어요. 8 스테이지를 깨면 승리.</div>
+    <div><b>부적.</b> 상점에서 최대 5개까지 장착해요. 칩, 배수, ×배수를 더해 점수 공식을 비틀어요. 발동 순서는 왼쪽부터예요. 장착해 두는 동안 계속 적용돼요.</div>
+    <div><b>내 덱.</b> 플레이어는 자기 덱에서 뽑고, 딜러는 따로 섞은 덱을 써요. 상점에서 카드를 추가·강화·제거해서 덱을 만들어요. 덱 변경은 게임이 끝날 때까지 유지돼요.</div>
+    <div><b>보스.</b> 3·6·8 스테이지에는 규칙을 비트는 보스 10종 중 하나가 붙어요. 보스 규칙은 그 스테이지에서만 적용돼요.</div>
     <div><b>버스트 확률.</b> 남은 내 덱 기준으로 다음 히트의 버스트 확률이 표시돼요. 판단은 직접!</div>
     <div><b>트릭 카드.</b> 상점에서 사는 1회용 카드예요. 최대 2장, 부적 칸 오른쪽에서 눌러서 써요. 다음 카드 미리보기, 바꿔치기 등.</div>
     <div><b>엔드리스.</b> 8스테이지를 깨면 계속 이어서 할 수 있어요. 목표가 계속 오르고 2스테이지마다 보스가 나와요.</div>
   </div>
   <div class="ptable">
-    <div>승리<b><span class="c">10</span> × <span class="m">2</span></b></div>
-    <div>블랙잭<b><span class="c">25</span> × <span class="m">4</span></b></div>
-    <div>푸시<b><span class="c">0</span> × <span class="m">1</span></b></div>
+    <div>승리<b><span class="c">칩</span> × <span class="m">2</span></b></div>
+    <div>블랙잭<b><span class="c">칩</span> × <span class="m">4</span></b></div>
+    <div>푸시<b><span class="c">칩</span> × <span class="m">1</span></b></div>
     <div>더블다운<b><span class="m">최종 ×2</span></b></div>
   </div>
   <p style="font-size:12.5px;color:var(--muted)">카드 칩: 숫자는 그대로, 그림카드 10, 에이스 11. 딜러는 17 이상에서 스탠드합니다.</p>`;

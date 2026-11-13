@@ -54,7 +54,7 @@ function resumeRun(){
   if(d.phase==='clear'){openShop();return;}
   const bossHtml=S.boss?`<div class="next" style="margin-top:12px"><span class="bn">보스 · ${S.boss.name}</span><br>${S.boss.desc}</div>`:'';
   openPanel(`<div class="sub">CONTINUE · ${S.stage>8?`ENDLESS STAGE ${S.stage}`:`STAGE ${S.stage} / 8`}</div><h2>이어하기</h2>
-    <p>점수 <b class="gold">${fmt(S.score)}</b> / ${fmt(S.target)} · 남은 핸드 <b>${S.handsLeft}</b> · 골드 <b class="gold">${S.gold}G</b></p>${bossHtml}
+    <p>점수 <b class="gold">${fmt(S.score)}</b> / ${fmt(S.target)} · 남은 횟수 <b>${S.handsLeft}</b> · 골드 <b class="gold">${S.gold}G</b></p>${bossHtml}
     <div class="actions"><button class="btn" id="goStage">계속하기</button></div>`);
   $('#goStage').onclick=()=>{sfx.click();closePanel();startHand();};
 }

@@ -12,7 +12,7 @@ const SUIT_ORDER={'♠':0,'♥':1,'♦':2,'♣':3},RANK_ORDER=Object.fromEntries
 const sortCards=a=>[...a].sort((x,y)=>SUIT_ORDER[x.s]-SUIT_ORDER[y.s]||RANK_ORDER[x.r]-RANK_ORDER[y.r]);
 const ENH={
   gold:{name:'금박',tag:'金',desc:'이긴 핸드에서 배수 +4'},
-  glass:{name:'유리',tag:'琉',desc:'이긴 핸드에서 배수 ×2, 25% 확률로 깨짐'},
+  glass:{name:'유리',tag:'琉',desc:'이긴 핸드에서 배수 ×2, 25% 확률로 깨져 덱에서 사라짐'},
   gem:{name:'보석',tag:'寶',desc:'이긴 핸드에서 칩 +30'},
   lucky:{name:'행운',tag:'福',desc:'이긴 핸드에서 20% 확률 배수 +20, 15% 확률 골드 +4'},
 };

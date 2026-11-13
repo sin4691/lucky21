@@ -8,7 +8,7 @@ async function stageClear(){
   if(S.stage===8&&!S.endless)return victory();
   if(S.boss)achEvent('bossClear');
   const cap=hasCharm('usury')||S.richDeck?10:5;
-  const rows=[[S.boss?'보스 클리어':'스테이지 클리어',S.boss?6:4],[`남은 핸드 ${S.handsLeft}`,S.handsLeft],[`이자 (5골드당 1, 최대 ${cap})`,Math.min(cap,Math.floor(S.gold/5))]];
+  const rows=[[S.boss?'보스 클리어':'스테이지 클리어',S.boss?6:4],[`남은 횟수 ${S.handsLeft}`,S.handsLeft],[`이자 (5골드당 1, 최대 ${cap})`,Math.min(cap,Math.floor(S.gold/5))]];
   if(hasCharm('piggy'))rows.push(['돼지 저금통',3]);
   const sum=rows.reduce((a,r)=>a+r[1],0);
   openPanel(`<div class="sub">STAGE ${S.stage} CLEAR</div><h2>${fmt(S.score)} / ${fmt(S.target)}</h2>
@@ -76,13 +76,13 @@ function renderShop(){
     if(o.kind==='card'){
       div.appendChild(cardEl(o.card,false));
       title=`${o.card.s}${o.card.r}${o.card.enh?' · '+ENH[o.card.enh].name:''}`;
-      desc=o.card.enh?ENH[o.card.enh].desc:'덱에 카드 1장 추가';label=`추가 ${o.price}G`;
+      desc=o.card.enh?ENH[o.card.enh].desc:'덱에 카드 1장 추가 (영구)';label=`추가 ${o.price}G`;
     }else if(o.kind==='enh'){
       div.insertAdjacentHTML('beforeend',`<div class="svc-icon">${ENH[o.enh].tag}</div>`);
-      title=`${ENH[o.enh].name} 강화권`;desc=`덱의 카드 1장에 부여: ${ENH[o.enh].desc}`;label=`사용 ${o.price}G`;
+      title=`${ENH[o.enh].name} 강화권`;desc=`덱의 카드 1장에 영구 부여: ${ENH[o.enh].desc}`;label=`사용 ${o.price}G`;
     }else{
       div.insertAdjacentHTML('beforeend',`<div class="svc-icon">✂</div>`);
-      title='카드 제거';desc='덱에서 카드를 최대 3장 없앱니다 (최소 20장)';label=`제거 ${o.price}G`;
+      title='카드 제거';desc='덱에서 카드를 최대 3장 영구히 없앱니다 (최소 20장)';label=`제거 ${o.price}G`;
     }
     div.insertAdjacentHTML('beforeend',`<div class="on">${title}</div><div class="od">${desc}</div>`);
     const b=document.createElement('button');b.className='btn small';b.textContent=o.sold?'완료':label;

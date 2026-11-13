@@ -16,6 +16,6 @@ const DECKS=[
    desc:'무작위 10장이 금박 카드(이기면 배수 +4). 대신 골드 0으로 시작해요.',
    apply:S=>{shuffle([...S.myDeck]).slice(0,10).forEach(c=>c.enh='gold');S.gold=0;}},
   {id:'rich',name:'부자',sample:{r:'J',s:'♣'},unlock:'gold25',
-   desc:'골드 18로 시작하고 이자 한도가 10이에요. 대신 스테이지마다 핸드가 1 적어요.',
+   desc:'골드 18로 시작하고 이자 한도가 10이에요. 대신 스테이지마다 남은 횟수가 1 적어요.',
    apply:S=>{S.gold=18;S.handMod=-1;S.richDeck=true;}},
 ];

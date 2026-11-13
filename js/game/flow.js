@@ -118,9 +118,9 @@ async function finish(result){
   const box=$('#cmWrap').closest('.box');
   await tutStep('score',[
     {target:box,title:'점수 = 칩 × 배수',html:WIN_SET.has(result)||result==='push'
-      ?`이기면 <span class="c">칩</span>(내 카드 숫자의 합 + 기본 칩)에 <span class="m">배수</span>를 곱한 만큼 점수가 들어와요. 블랙잭은 기본값이 훨씬 커요.`
-      :`졌을 땐 점수가 없어요. 이기면 <span class="c">칩</span>(내 카드 숫자의 합 + 기본 칩)에 <span class="m">배수</span>를 곱한 만큼 점수가 들어와요.`},
-    {target:'.scorebox',title:'핸드 안에 목표 점수 넘기기',html:`스테이지마다 <b>핸드 ${baseHands()}번</b>이 주어져요. 그 안에 목표 점수를 넘기면 클리어하고, 남은 핸드는 골드로 바뀌어요.`},
+      ?`이기면 <span class="c">칩</span>(내 카드 숫자의 합)에 <span class="m">배수</span>를 곱한 만큼 점수가 들어와요. 기본 배수는 승리 2, 블랙잭 4예요.`
+      :`졌을 땐 점수가 없어요. 이기면 <span class="c">칩</span>(내 카드 숫자의 합)에 <span class="m">배수</span>를 곱한 만큼 점수가 들어와요. 기본 배수는 승리 2, 블랙잭 4예요.`},
+    {target:'.scorebox',title:'남은 횟수 안에 목표 점수 넘기기',html:`스테이지마다 <b>${baseHands()}번</b> 플레이할 수 있어요. 그 안에 목표 점수를 넘기면 클리어하고, 남은 횟수는 골드로 바뀌어요.`},
   ]);
   await sleep(650);
   if(S.score>=S.target)return stageClear();
@@ -155,7 +155,8 @@ async function scoreHand(result){
     await sleep(250);return 0;
   }
 
-  if(result==='bj'){chips=25;mult=4;}else if(win){chips=10;mult=2;}else{chips=0;mult=1;}
+  // 기본 점수 없이 카드 칩만 더한다. 배수만 결과에 따라 다름: 승리 2, 블랙잭 4, 푸시 1
+  chips=0;mult=result==='bj'?4:win?2:1;
   setCM(chips,mult);await sleep(380);
   // 1) 카드별: 칩 → 강화 → 부적
   for(let i=0;i<S.player.length;i++){
