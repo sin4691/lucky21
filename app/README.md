@@ -55,9 +55,49 @@ npm run sync
 - **패키지 이름**: `com.sin4691.lucky21` (출시 후 변경 불가)
 - **콘텐츠 등급 설문**: 모의 도박 요소 있음으로 정직하게 답변. 실제 돈 거래 없음
 - **타깃 연령**: 아동 대상으로 설정하지 않음
-- **데이터 보안**: 수집하는 데이터 없음, 공유하는 데이터 없음
+- **데이터 보안**: 광고(AdMob)와 클라우드 저장 때문에 "수집함". 항목별 답은 [`docs/store/listing.md`](../docs/store/listing.md)의 '앱 콘텐츠 설문' 참고
 - **개인정보처리방침 URL**: `https://sin4691.github.io/lucky21/privacy.html`
-- **광고 포함 여부**: 아니요
+- **광고 포함 여부**: 예
+- **광고 ID**: 예, 광고에 사용
+
+## 웹 체험판 / 앱 정식판
+
+같은 코드로 둘 다 만듭니다. `js/platform/edition.js`가 앱 안인지(`IS_APP`) 확인합니다.
+
+| | 웹 (깃허브 사이트) | 앱 |
+|---|---|---|
+| 스테이지 | 4스테이지까지 (`TRIAL_LAST_STAGE`), 끝나면 플레이 스토어 링크 | 12스테이지 + 무한 모드 |
+| 광고 | 없음 | 보상형만: 탈락 직전 1번 더(한 판에 1번), 상점 무료 새로고침(상점마다 1번) |
+| 클라우드 저장 | 없음 | Play 게임즈 저장된 게임 |
+
+## 광고 (AdMob) 설정
+
+지금은 **구글 테스트 광고 ID**가 들어 있어서 폰에서 "Test Ad"가 나옵니다. 출시 전에 실제 ID로 바꿉니다.
+
+1. https://admob.google.com 가입 → **앱 > 앱 추가** → Android, "Google Play에 등록됨"은 아직이면 "아니요"
+2. 앱 ID(`ca-app-pub-숫자~숫자`)를 `android/app/src/main/res/values/strings.xml`의 `admob_app_id`에 넣기
+3. **광고 단위 > 보상형** 하나 만들기 → 단위 ID(`ca-app-pub-숫자/숫자`)를 `js/platform/ads.js`의 `ADS_CONFIG.rewardedId`에 넣고 `testing:false`로
+4. AdMob **개인정보 보호 및 메시지 > 유럽 규정** 메시지를 만들어 게시 (안 하면 유럽 사용자에게 광고가 안 나옴)
+5. 플레이 스토어에 출시한 뒤 AdMob에서 앱을 스토어와 연결하고, `app-ads.txt`가 필요하면 안내대로 등록
+6. `npm run sync`
+
+> 실제 광고 ID로 바꾼 뒤에는 **자기 광고를 직접 누르지 마세요.** 계정이 정지될 수 있습니다. 개발 중에는 `testing:true`로 두면 됩니다.
+
+## 클라우드 저장 (Play 게임즈) 설정
+
+`strings.xml`의 `game_services_project_id`가 비어 있으면 클라우드 저장은 꺼진 채로 동작합니다 (메뉴에도 안 보임).
+
+1. 플레이 콘솔에서 앱 만들기 (앱 유형: **게임**)
+2. **Play 게임즈 서비스 > 설정 및 관리 > 설정** → "새 Play 게임즈 서비스 프로젝트" (Google Cloud 프로젝트도 새로 만들기)
+3. **속성 수정 → 저장된 게임: 사용**
+4. **사용자 인증 정보 추가 → Android** → OAuth 동의 화면 설정 후, 패키지 `com.sin4691.lucky21`와 **SHA-1 인증서 지문** 입력
+   - 플레이 앱 서명을 쓰면 SHA-1은 플레이 콘솔 **테스트 및 출시 > 설정 > 앱 무결성 > 앱 서명 키 인증서**에 있습니다
+5. Google Cloud 콘솔에서 **Google Drive API** 사용 설정 (저장된 게임이 이걸 씁니다)
+6. 설정 화면 맨 위의 **프로젝트 ID(숫자)** 를 `strings.xml`의 `game_services_project_id`에 넣기
+7. **테스터** 탭에 본인 구글 계정 추가 → 변경사항 검토 후 게시
+8. `npm run sync` → 서명된 번들로 **내부 테스트 트랙**에 올려서, 플레이 스토어에서 설치해 확인
+
+> 안드로이드 스튜디오 ▶ Run 으로 직접 설치한 앱은 서명 키가 달라서 Play 게임즈 로그인이 안 됩니다. 클라우드 저장은 반드시 테스트 트랙으로 설치해서 확인하세요. 게임 자체는 로그인 없이도 정상 동작합니다.
 
 ## 구성
 
@@ -67,3 +107,4 @@ npm run sync
 | `capacitor.config.json` | 앱 이름, 패키지 이름, 배경색 |
 | `resources/` | 아이콘·스플래시 원본. 바꾼 뒤 `npx capacitor-assets generate --android --assetPath resources` 실행 |
 | `android/` | Android Studio 프로젝트 |
+| `android/.../CloudSavePlugin.java` | Play 게임즈 저장된 게임을 웹 쪽(`js/platform/cloud.js`)에 연결하는 직접 만든 플러그인 |

@@ -33,6 +33,7 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        registerPlugin(CloudSavePlugin.class); // 이 앱 안에 직접 만든 플러그인은 super.onCreate 전에 등록
         super.onCreate(savedInstanceState);
 
         // 카메라 구멍이 있는 짧은 변(세로 모드의 위쪽)까지 앱이 그리도록 허용

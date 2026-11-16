@@ -47,7 +47,8 @@ Vença o dealer para marcar fichas × mult. com suas cartas e passe da meta das 
 · Modo demo que começa com uma build pronta
 · Continue de onde parou, mesmo fechando o app
 · 7 idiomas: Português, English, 한국어, 日本語, 繁體中文, Español, Deutsch
-· Sem anúncios, sem compras no app, joga offline
+· Sem compras no app. Só anúncios opcionais com recompensa (jogada extra, renovar grátis)
+· Salvamento na nuvem com Google Play Games
 
 ※ Este jogo não envolve dinheiro real nem prêmios. O ouro do jogo é uma moeda virtual usada só na loja e não pode ser trocado por dinheiro.
 ```

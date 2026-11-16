@@ -8,5 +8,6 @@ function saveRec(won){
   const r=loadRec();r.stage=Math.max(r.stage,won||S.endless?FINAL_STAGE+1:S.stage);r.hand=Math.max(r.hand,S.bestHand);if(won)r.wins++;
   if(S.endless)r.endless=Math.max(r.endless||0,S.stage);
   try{localStorage.setItem('lucky21.rec',JSON.stringify(r));}catch(e){}
+  cloudPush();
 }
 function recHtml(){const r=loadRec();if(!r.stage)return'';return`<div class="record">${t('ui.recBest')} · ${r.stage>FINAL_STAGE?`<b>${t('ui.recClear')}</b>`:t('ui.recStage',{n:r.stage})} · ${t('ui.recHand',{n:fmt(r.hand)})}${r.wins?` · ${t('ui.recWins',{n:r.wins})}`:''}${r.endless?` · ${t('ui.recEndless',{n:r.endless})}`:''}</div>`;}

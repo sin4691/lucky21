@@ -553,3 +553,6 @@ html:lang(ja) .logo small,html:lang(zh-Hant) .logo small{font-family:inherit}
 .stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:6px}
 .stat{display:flex;justify-content:space-between;align-items:baseline;gap:8px;background:#0e0f0c;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--muted)}
 .stat b{color:var(--cream);font-size:16px}
+/* ---------- 웹 체험판 ---------- */
+.trial-badge{color:var(--gold);letter-spacing:1px}
+a.btn{text-decoration:none;display:inline-flex;flex-direction:column;align-items:center;justify-content:center}

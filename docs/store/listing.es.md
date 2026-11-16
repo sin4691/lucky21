@@ -47,7 +47,8 @@ Gana al crupier para sumar fichas × mult. con tus cartas y supera la meta de la
 · Modo demo que empieza con una build completa
 · Continúa cuando quieras, aunque cierres la app
 · 7 idiomas: Español, English, 한국어, 日本語, 繁體中文, Português, Deutsch
-· Sin anuncios, sin compras integradas, se juega sin conexión
+· Sin compras integradas. Solo anuncios opcionales con recompensa (jugada extra, renovar gratis)
+· Guardado en la nube con Google Play Juegos
 
 ※ Este juego no implica dinero real ni premios. El oro del juego es una moneda virtual que solo se usa en la tienda y no se puede canjear por dinero.
 ```

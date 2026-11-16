@@ -23,21 +23,22 @@ function snapshot(phase){
     score:S.score,target:S.target,handsLeft:S.handsLeft,handNo:S.handNo,insuranceUsed:!!S.insuranceUsed,
     draw:S.draw.map(plainCard),discard:[...S.discard,...(phase==='hand'?pend:[])].map(plainCard),shoe:S.shoe.map(plainCard),
     rerollCost:S.rerollCost,
-    log:S.log||[],trig:S.trig||{},bestInfo:S.bestInfo||null,counted:!!S.counted,
+    log:S.log||[],trig:S.trig||{},bestInfo:S.bestInfo||null,counted:!!S.counted,revived:!!S.revived,adReroll:!!S.adReroll,
     offers:(S.offers||[]).map(o=>({id:o.def.id,sold:o.sold})),
     cardOffers:(S.cardOffers||[]).map(o=>({...o,card:o.card?plainCard(o.card):undefined})),
     trickOffers:(S.trickOffers||[]).map(o=>({id:o.t.id,sold:o.sold})),
   };
   try{localStorage.setItem(SAVE_KEY,JSON.stringify(d));}catch(e){}
+  cloudPush();
 }
 function loadSave(){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY));return d&&d.v===1?d:null;}catch(e){return null;}}
-function clearSave(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
+function clearSave(){try{localStorage.removeItem(SAVE_KEY);localStorage.setItem('lucky21.saveCleared',String(Date.now()));}catch(e){}cloudPush();}
 function restore(d){
   newRun();
   const byId=new Map();const card=c=>{if(byId.has(c.id))return byId.get(c.id);const x={...c};byId.set(c.id,x);return x;};
   Object.assign(S,{deckId:d.deckId||'classic',handMod:d.handMod||0,richDeck:!!d.richDeck,bjCount:d.bjCount||0,stage:d.stage,gold:d.gold,streak:d.streak,bestHand:d.bestHand,usedBoss:d.usedBoss||[],endless:d.endless,
     tut:d.tut,tutSeen:d.tutSeen||{},score:d.score,target:d.target,handsLeft:d.handsLeft,handNo:d.handNo||0,insuranceUsed:d.insuranceUsed,
-    rerollCost:d.rerollCost||2,log:d.log||[],trig:d.trig||{},bestInfo:d.bestInfo||null,counted:!!d.counted,over:false});
+    rerollCost:d.rerollCost||2,log:d.log||[],trig:d.trig||{},bestInfo:d.bestInfo||null,counted:!!d.counted,revived:!!d.revived,adReroll:!!d.adReroll,over:false});
   S.charms=d.charms.map(c=>{const def=CHARMS.find(x=>x.id===c.id);return def&&{...makeCharm(def),val:c.val||0};}).filter(Boolean);
   S.tricks=d.tricks.map(id=>TRICKS.find(t=>t.id===id)).filter(Boolean);
   S.myDeck=d.myDeck.map(card);S.draw=d.draw.map(card);S.discard=d.discard.map(card);S.shoe=d.shoe.map(c=>({...c}));
@@ -54,6 +55,7 @@ function resumeRun(){
   $('#pHand').innerHTML='';$('#dHand').innerHTML='';$('#pTot').textContent='';$('#dTot').textContent='';
   if(d.phase==='shop'){renderShop();return;}
   if(d.phase==='clear'){openShop();return;}
+  if(S.handsLeft<=0){lastChance();return;}
   const bossHtml=S.boss?`<div class="next" style="margin-top:12px"><span class="bn">${t('ui.bossLabel',{name:S.boss.name})}</span><br>${S.boss.desc}</div>`:'';
   openPanel(`<div class="sub">CONTINUE · ${S.stage>FINAL_STAGE?`∞ · STAGE ${S.stage}`:`STAGE ${S.stage} / ${FINAL_STAGE}`}</div><h2>${t('ui.continueTitle')}</h2>
     <p>${t('ui.continueInfo',{score:fmt(S.score),target:fmt(S.target),hands:S.handsLeft,gold:S.gold})}</p>${bossHtml}

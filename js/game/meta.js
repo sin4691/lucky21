@@ -12,7 +12,7 @@ function loadMeta(){
   return m;
 }
 let META=loadMeta();
-function saveMeta(){try{localStorage.setItem(META_KEY,JSON.stringify(META));}catch(e){}}
+function saveMeta(){try{localStorage.setItem(META_KEY,JSON.stringify(META));}catch(e){}cloudPush();}
 const recordOn=()=>S&&!S.demo;
 
 function discover(kind,id){

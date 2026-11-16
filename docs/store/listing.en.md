@@ -47,7 +47,8 @@ Beat the dealer to score your cards' chips × mult, and pass the target score of
 · Demo mode that starts with a finished build
 · Continue anytime, even if you close the app
 · 7 languages: English, 한국어, 日本語, 繁體中文, Español, Português, Deutsch
-· No ads, no in-app purchases, plays offline
+· No in-app purchases. Ads are optional rewarded ads only (extra play, free reroll)
+· Cloud save with Google Play Games
 
 ※ This game involves no real money or prizes. In-game gold is a virtual currency used only in the shop and cannot be exchanged for cash.
 ```

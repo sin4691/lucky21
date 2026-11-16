@@ -47,7 +47,8 @@ Schlag den Dealer, um Chips × Mult deiner Karten als Punkte zu holen, und über
 · Demomodus mit fertigem Build
 · Jederzeit fortsetzen, auch nach dem Schließen der App
 · 7 Sprachen: Deutsch, English, 한국어, 日本語, 繁體中文, Español, Português
-· Keine Werbung, keine In-App-Käufe, offline spielbar
+· Keine In-App-Käufe. Nur freiwillige Werbung mit Belohnung (Extra-Zug, Gratis neu)
+· Cloud-Speicher mit Google Play Spiele
 
 ※ In diesem Spiel geht es nicht um echtes Geld oder Preise. Das Gold im Spiel ist eine virtuelle Währung, die nur im Shop genutzt wird und nicht in Geld umgetauscht werden kann.
 ```

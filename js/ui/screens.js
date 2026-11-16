@@ -54,7 +54,7 @@ function openLangPicker(back){
 function title(){
   const sv=loadSave();
   newRun();S.over=true;renderSide();renderCharms();$('.logo').innerHTML='LUCKY 21<small>BLACKJACK ROGUELIKE</small>';
-  openPanel(`<button class="linkbtn lang-btn" id="titleLang">🌐 ${LANGS.find(l=>l[0]===LANG)[1]}</button><h1 class="brand">LUCKY 21</h1><div class="sub">BLACKJACK ROGUELIKE</div>
+  openPanel(`<button class="linkbtn lang-btn" id="titleLang">🌐 ${LANGS.find(l=>l[0]===LANG)[1]}</button><h1 class="brand">LUCKY 21</h1><div class="sub">BLACKJACK ROGUELIKE${isTrial()?` · <span class="trial-badge">${t('trial.badge',{n:TRIAL_LAST_STAGE})}</span>`:''}</div>
     <ul class="pitch">
       <li>${t('title.p1')}</li>
       <li>${t('title.p2')}</li>

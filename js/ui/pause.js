@@ -29,6 +29,10 @@ function renderPause(){
     ${canVibrate?`<div class="pz-row"><span>${t('pause.vib')}</span><div class="pz-seg">
       <button data-vib="1" class="${SETTINGS.vib?'on':''}">${t('pause.on')}</button><button data-vib="0" class="${SETTINGS.vib?'':'on'}">${t('pause.off')}</button></div></div>`:''}
     <div class="pz-row"><span>${t('ui.language')}</span><button class="pz-link" id="pzLang">${LANGS.find(l=>l[0]===LANG)[1]} ▸</button></div>
+    ${IS_APP&&CLOUD.available?`<div class="pz-row"><span>${t('cloud.label')}</span>${CLOUD.signedIn
+      ?`<button class="pz-link" id="pzCloud">${t('cloud.on')} · ${t('cloud.syncNow')} ▸</button>`
+      :`<button class="pz-link" id="pzCloud">${t('cloud.signIn')} ▸</button>`}</div>`:''}
+    ${adsPrivacyRequired?`<div class="pz-row"><span>${t('ads.privacy')}</span><button class="pz-link" id="pzAdPriv">${t('ads.privacyEdit')} ▸</button></div>`:''}
     ${overlayOn?'':`<div class="pz-btns"><button id="pzRules">${t('ui.rules')}</button><button id="pzCol">${t('ui.collection')}</button>${run?`<button id="pzDeck">${t('ui.myDeck')}</button>`:''}</div>`}
     ${run?`<div class="pz-leave">
       <button class="btn teal" id="pzTitle">${t('pause.toTitle')}</button>
@@ -41,6 +45,10 @@ function renderPause(){
   v.oninput=()=>{SETTINGS.vol=+v.value/100;$('#pzVolV').textContent=v.value+'%';applySettings();};
   v.onchange=()=>{saveSettings();sfx.click();};
   $('#pzLang').onclick=()=>{sfx.click();closePause();openLangPicker(null);};
+  if($('#pzCloud'))$('#pzCloud').onclick=async()=>{sfx.click();
+    if(!CLOUD.signedIn)return cloudSignIn().then(renderPause);
+    const changed=await cloudSync();if(changed&&!inRun()){closePause();title();}toast(t('cloud.synced'));};
+  if($('#pzAdPriv'))$('#pzAdPriv').onclick=()=>{sfx.click();showAdPrivacy();};
   if($('#pzRules')){
     $('#pzRules').onclick=()=>{closePause();openRules();};
     $('#pzCol').onclick=()=>{sfx.click();closePause();openCollection(null);};

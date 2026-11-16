@@ -20,4 +20,4 @@ $('#pauseWrap').addEventListener('click',e=>{if(e.target.id==='pauseWrap')closeP
 
 document.addEventListener('touchstart',e=>{if(!e.target.closest('.charm,.card'))hideTip();},{passive:true});
 addEventListener('scroll',hideTip,{passive:true});
-loadArt().then(title);
+loadArt().then(title).then(()=>{initAds();initCloud();});

@@ -25,7 +25,7 @@ function buzz(kind){
 const STATS_KEY='lucky21.stats';
 const STATS=(()=>{const d={runs:0,clears:0,giveups:0,hands:0,wins:0,bjs:0,busts:0,bestHand:0,bestStage:0,bestEndless:0,totalScore:0};
   try{return {...d,...JSON.parse(localStorage.getItem(STATS_KEY)||'{}')};}catch(e){return d;}})();
-function saveStats(){try{localStorage.setItem(STATS_KEY,JSON.stringify(STATS));}catch(e){}}
+function saveStats(){try{localStorage.setItem(STATS_KEY,JSON.stringify(STATS));}catch(e){}cloudPush();}
 function statHand(result,pts){
   if(!S||S.demo)return;
   STATS.hands++;if(WIN_SET.has(result))STATS.wins++;if(result==='bj')STATS.bjs++;if(result==='bust')STATS.busts++;

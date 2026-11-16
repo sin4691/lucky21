@@ -7,6 +7,7 @@ async function stageClear(){
   hideBanner();sfx.big();burst(innerWidth/2,innerHeight*.4,90,['#e8c46a','#fff3c4','#7fe0d4','#ff8a5c'],11);shake(true);
   await sleep(500);
   if(S.stage===FINAL_STAGE&&!S.endless)return victory();
+  if(trialEndCheck())return;
   if(S.boss)achEvent('bossClear');
   const cap=hasCharm('usury')||S.richDeck?10:5;
   const rows=[[S.boss?t('shop.bossClear'):t('shop.stageClear'),S.boss?6:4],[t('shop.handsLeft',{n:S.handsLeft}),S.handsLeft],[t('shop.interest',{cap}),Math.min(cap,Math.floor(S.gold/5))]];
@@ -55,14 +56,14 @@ function rollCardOffers(){
 }
 function rollTrickOffers(){return shuffle([...TRICKS]).slice(0,2).map(t=>({t,sold:false}));}
 function openShop(){
-  S.stage++;S.nextBoss=pickBoss(S.stage);S.rerollCost=2;S.offers=rollOffers();S.cardOffers=rollCardOffers();S.trickOffers=rollTrickOffers();renderShop();
+  S.stage++;S.nextBoss=pickBoss(S.stage);S.rerollCost=2;S.adReroll=false;S.offers=rollOffers();S.cardOffers=rollCardOffers();S.trickOffers=rollTrickOffers();renderShop();
 }
 function renderShop(){
   const nb=S.nextBoss;
   openPanel(`<div class="shop-head"><div><div class="sub">SHOP</div><h2>${t('shop.title')}</h2></div><div class="purse">${S.gold}G</div></div>
     <div class="sec">${t('shop.charms',{n:S.charms.length})}</div>
     <div class="offers" id="offers"></div>
-    <div class="actions" style="justify-content:flex-start;margin-top:0"><button class="btn teal small" id="reroll">${t('shop.reroll',{cost:S.rerollCost})}</button></div>
+    <div class="actions" style="justify-content:flex-start;margin-top:0"><button class="btn teal small" id="reroll">${t('shop.reroll',{cost:S.rerollCost})}</button>${canShowAds()&&!S.adReroll?`<button class="btn small" id="adReroll">▶ ${t('ads.freeReroll')}<small>AD</small></button>`:''}</div>
     <div class="splitrow"><div><div class="sec">${t('shop.cards',{n:S.myDeck.length})} <button class="linkbtn" id="shopDeck" style="margin-left:8px">${t('ui.viewDeck')}</button></div>
     <div class="cardoffers" id="cardOffers"></div></div>
     <div><div class="sec">${t('shop.tricks',{n:S.tricks.length})}</div>
@@ -132,6 +133,9 @@ function renderShop(){
   });
   const rr=$('#reroll');rr.disabled=S.gold<S.rerollCost;
   rr.onclick=()=>{S.gold-=S.rerollCost;S.rerollCost++;S.offers=rollOffers();sfx.click();renderSide();renderShop();};
+  // 광고 보고 무료 새로고침 (상점마다 1번, 앱에서만)
+  const ar=$('#adReroll');
+  if(ar)ar.onclick=async()=>{sfx.click();ar.disabled=true;if(await showRewarded()){S.adReroll=true;S.offers=rollOffers();snapshot('shop');renderShop();}else ar.disabled=false;};
   $('#shopDeck').onclick=()=>{sfx.click();openDeckView(renderShop);};
   snapshot('shop');
   $('#nextStage').onclick=()=>{sfx.click();hideTip();closePanel();startStage();};

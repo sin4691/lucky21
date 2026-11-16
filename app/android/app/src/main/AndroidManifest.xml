@@ -20,6 +20,15 @@
             </intent-filter>
         </activity>
 
+        <!-- AdMob 앱 ID (strings.xml의 admob_app_id) -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id" />
+        <!-- 플레이 게임즈 프로젝트 ID (strings.xml의 game_services_project_id, 비어 있으면 클라우드 저장 꺼짐) -->
+        <meta-data
+            android:name="com.google.android.gms.games.APP_ID"
+            android:value="@string/game_services_project_id" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

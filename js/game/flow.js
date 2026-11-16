@@ -125,7 +125,7 @@ async function finish(result){
   ]);
   await sleep(650);
   if(S.score>=S.target)return stageClear();
-  if(S.handsLeft<=0)return gameOver();
+  if(S.handsLeft<=0)return lastChance();
   snapshot('hand');
   startHand();
 }
