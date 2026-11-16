@@ -1,0 +1,87 @@
+# 태그(v1.2.3)를 올리면: 검사·테스트 → 서명된 App Bundle 빌드 → 플레이 콘솔 내부 테스트 트랙에 업로드
+# 필요한 시크릿은 app/README.md의 "자동 빌드·배포" 참고
+name: Android release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 태그에서 버전 계산
+        # v1.2.3 → versionName 1.2.3, versionCode 10203 (항상 커지도록)
+        run: |
+          V="${GITHUB_REF_NAME#v}"
+          IFS=. read -r MA MI PA <<< "$V"
+          echo "APP_VERSION_NAME=$V" >> "$GITHUB_ENV"
+          echo "APP_VERSION_CODE=$((MA*10000 + MI*100 + PA))" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            app/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - uses: android-actions/setup-android@v3
+
+      - name: 검사·테스트
+        run: |
+          npm ci
+          npm run check
+          npx playwright install --with-deps chromium
+          npx playwright test
+
+      - name: 웹 번들 → 안드로이드 프로젝트
+        working-directory: app
+        run: |
+          npm ci
+          npm run sync
+
+      - name: 업로드 키 복원
+        env:
+          UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+        run: |
+          echo "$UPLOAD_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          echo "LUCKY21_KEYSTORE=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
+
+      - name: 서명된 App Bundle 빌드
+        working-directory: app/android
+        env:
+          LUCKY21_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+          LUCKY21_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          LUCKY21_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon bundleRelease -PappVersionCode="$APP_VERSION_CODE" -PappVersionName="$APP_VERSION_NAME"
+
+      - name: 빌드 결과 보관
+        uses: actions/upload-artifact@v4
+        with:
+          name: lucky21-${{ env.APP_VERSION_NAME }}.aab
+          path: app/android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+      - name: 플레이 콘솔 내부 테스트에 업로드
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.sin4691.lucky21
+          releaseFiles: app/android/app/build/outputs/bundle/release/app-release.aab
+          track: internal
+          status: completed
+          releaseName: ${{ env.APP_VERSION_NAME }}
+
+      - name: 업로드 키 지우기
+        if: always()
+        run: rm -f "$RUNNER_TEMP/upload.jks"

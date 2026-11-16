@@ -1,0 +1,7 @@
+node_modules/
+test-results/
+playwright-report/
+# 서명 키와 비밀 정보는 절대 커밋하지 않는다
+*.jks
+*.keystore
+service-account*.json

@@ -1,0 +1,62 @@
+# 푸시·PR마다: 번역·XML 검사 → 브라우저 테스트(데스크톱·모바일) → main이면 웹 체험판을 GitHub Pages에 배포
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: 번역·XML 검사
+        run: npm run check
+      - name: 브라우저 설치
+        run: npx playwright install --with-deps chromium
+      - name: 브라우저 테스트
+        run: npx playwright test
+      - name: 실패하면 리포트 올리기
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+          retention-days: 7
+
+  deploy-web:
+    # 테스트를 통과한 main만 배포한다
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: 사이트 파일만 모으기
+        run: |
+          mkdir _site
+          cp -r index.html privacy.html css js assets _site/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4

@@ -99,6 +99,57 @@ npm run sync
 
 > 안드로이드 스튜디오 ▶ Run 으로 직접 설치한 앱은 서명 키가 달라서 Play 게임즈 로그인이 안 됩니다. 클라우드 저장은 반드시 테스트 트랙으로 설치해서 확인하세요. 게임 자체는 로그인 없이도 정상 동작합니다.
 
+## 자동 빌드·배포 (GitHub Actions)
+
+| 워크플로 | 언제 | 하는 일 |
+|---|---|---|
+| `.github/workflows/ci.yml` | `main` 푸시·PR | 번역·XML 검사 → 브라우저 테스트(데스크톱·모바일) → 통과하면 웹 체험판을 GitHub Pages에 배포 |
+| `.github/workflows/release-android.yml` | `v1.2.3` 같은 태그 푸시 | 검사·테스트 → 서명된 App Bundle 빌드 → 플레이 콘솔 **내부 테스트** 트랙에 업로드 |
+
+### 처음 한 번 설정
+
+**1. Pages를 Actions 배포로 바꾸기**
+GitHub 저장소 **Settings > Pages > Build and deployment > Source**를 **GitHub Actions**로 바꿉니다. 이제 테스트를 통과한 커밋만 사이트에 올라갑니다.
+
+**2. 플레이 콘솔 업로드용 서비스 계정**
+1. Google Cloud 콘솔(lucky21 프로젝트) **API 및 서비스 > 라이브러리**에서 **Google Play Android Developer API**를 사용 설정
+2. **IAM 및 관리자 > 서비스 계정 > 서비스 계정 만들기** → 이름 `play-upload`, 역할은 비워 두고 완료
+3. 만든 계정 → **키 > 키 추가 > 새 키 만들기 > JSON** → 파일이 내려받아집니다 (저장소에 넣지 말 것)
+4. 플레이 콘솔 **홈 > 사용자 및 권한 > 새 사용자 초대** → 서비스 계정 이메일(`play-upload@...iam.gserviceaccount.com`) 입력
+   → **앱 권한**에서 LUCKY 21 추가 → **테스트 트랙에 앱 출시**, **앱 정보 보기** 체크 → 초대
+
+**3. GitHub 시크릿 등록** (Settings > Secrets and variables > Actions > New repository secret)
+
+| 이름 | 값 |
+|---|---|
+| `UPLOAD_KEYSTORE_BASE64` | 업로드 키(.jks)를 base64로 바꾼 글자. PowerShell: `[Convert]::ToBase64String([IO.File]::ReadAllBytes("C:\Keys\lucky21-upload.jks")) \| Set-Clipboard` 후 붙여넣기 |
+| `UPLOAD_KEYSTORE_PASSWORD` | 키스토어 비밀번호 |
+| `UPLOAD_KEY_ALIAS` | 키 별칭 (예: `upload`) |
+| `UPLOAD_KEY_PASSWORD` | 키 비밀번호 |
+| `PLAY_SERVICE_ACCOUNT_JSON` | 2-3에서 받은 JSON 파일 내용 전체 |
+
+시크릿은 저장소 코드나 로그에 나오지 않습니다. 키 파일은 빌드 중에만 임시 폴더에 풀었다가 지웁니다.
+
+### 출시하기
+
+```bash
+git tag v1.0.2
+git push origin v1.0.2
+```
+
+- 버전은 태그에서 자동으로 정합니다: `v1.0.2` → versionName `1.0.2`, versionCode `10002` (`주×10000 + 부×100 + 수`)
+- Actions 탭에서 진행 상황을 볼 수 있고, 끝나면 플레이 콘솔 내부 테스트에 새 버전이 올라가 있습니다
+- 비공개 테스트·프로덕션으로 올리는 건 플레이 콘솔에서 내부 테스트 버전을 **승격**하면 됩니다
+- 태그 빌드를 쓰기 시작하면 versionCode가 10000대가 되므로, 안드로이드 스튜디오에서 손으로 빌드해 올릴 때는 `build.gradle`의 기본 versionCode를 그보다 크게 바꿔야 합니다
+
+### 로컬에서 같은 검사 돌리기
+
+```bash
+npm install
+npx playwright install chromium   # 처음 한 번
+npm run ci                        # 번역·XML 검사 + 브라우저 테스트
+```
+
 ## 구성
 
 | 파일 | 역할 |

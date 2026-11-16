@@ -7,8 +7,9 @@ android {
         applicationId "com.sin4691.lucky21"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.0.1"
+        // CI(태그 빌드)에서는 -PappVersionCode / -PappVersionName 으로 덮어쓴다. 안드로이드 스튜디오 빌드는 아래 값.
+        versionCode project.hasProperty('appVersionCode') ? project.property('appVersionCode').toInteger() : 2
+        versionName project.hasProperty('appVersionName') ? project.property('appVersionName') : "1.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,8 +17,21 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // CI 서명: 환경 변수가 있을 때만 쓴다. 안드로이드 스튜디오의 "Generate Signed App Bundle"은 그대로 동작한다.
+    def ciKeystore = System.getenv('LUCKY21_KEYSTORE')
+    signingConfigs {
+        if (ciKeystore) {
+            ci {
+                storeFile file(ciKeystore)
+                storePassword System.getenv('LUCKY21_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('LUCKY21_KEY_ALIAS')
+                keyPassword System.getenv('LUCKY21_KEY_PASSWORD')
+            }
+        }
+    }
     buildTypes {
         release {
+            if (ciKeystore) signingConfig signingConfigs.ci
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
