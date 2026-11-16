@@ -28,7 +28,7 @@ Gana al crupier para sumar fichas × mult. con tus cartas y supera la meta de la
 · Ve al instante tu probabilidad de pasarte al pedir, según lo que queda en tu mazo.
 
 ■ 39 amuletos que cambian la fórmula de puntos
-· Combina amuletos como «+3 Mult. por cada carta de corazones» o «×7 Mult. si llegas a 21 con 3 cartas o más» y crea tu propia build.
+· Combina amuletos como «+3 Mult. por cada carta de corazones» o «×8 Mult. si llegas a 21 con 3 cartas o más» y crea tu propia build.
 · Se activan de izquierda a derecha, así que el orden también es estrategia.
 
 ■ 5 cartas de truco de un solo uso

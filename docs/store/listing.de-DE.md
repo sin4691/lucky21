@@ -28,7 +28,7 @@ Schlag den Dealer, um Chips × Mult deiner Karten als Punkte zu holen, und über
 · Sieh sofort dein Überkauf-Risiko für die nächste Karte – berechnet aus deinem restlichen Deck.
 
 ■ 39 Talismane, die die Punkteformel umschreiben
-· Kombiniere Talismane wie „+3 Mult pro Herz-Karte“ oder „×7 Mult bei 21 mit 3 oder mehr Karten“ zu deinem eigenen Build.
+· Kombiniere Talismane wie „+3 Mult pro Herz-Karte“ oder „×8 Mult bei 21 mit 3 oder mehr Karten“ zu deinem eigenen Build.
 · Talismane wirken von links nach rechts – auch die Reihenfolge ist Strategie.
 
 ■ 5 einmalige Trickkarten

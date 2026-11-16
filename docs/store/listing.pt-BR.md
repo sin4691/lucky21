@@ -28,7 +28,7 @@ Vença o dealer para marcar fichas × mult. com suas cartas e passe da meta das 
 · Veja na hora a chance de estourar no próximo pedido, com base no que resta do baralho.
 
 ■ 39 amuletos que mudam a fórmula de pontos
-· Combine amuletos como "+3 Mult. por carta de copas" ou "×7 Mult. ao fazer 21 com 3 cartas ou mais" e monte sua build.
+· Combine amuletos como "+3 Mult. por carta de copas" ou "×8 Mult. ao fazer 21 com 3 cartas ou mais" e monte sua build.
 · Eles ativam da esquerda para a direita, então a ordem também é estratégia.
 
 ■ 5 cartas de truque de uso único

@@ -28,7 +28,7 @@ Beat the dealer to score your cards' chips × mult, and pass the target score of
 · See your bust chance for the next hit, calculated from what's left in your deck.
 
 ■ 39 charms that rewrite the scoring formula
-· Combine charms like "+3 Mult per heart card" or "×7 Mult when you make 21 with 3+ cards" to build your own combo.
+· Combine charms like "+3 Mult per heart card" or "×8 Mult when you make 21 with 3+ cards" to build your own combo.
 · Charms trigger left to right, so their order is part of the strategy.
 
 ■ 5 single-use trick cards
