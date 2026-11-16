@@ -404,4 +404,6 @@ L['zh-Hant']={
   "cloud.signIn":"登入 Play 遊戲",
   "cloud.synced":"已存到雲端",
   "cloud.signInFailed":"無法登入",
+  "ui.privacy":"隱私權",
+  "ui.open":"政策",
 };

@@ -404,4 +404,6 @@ L['es']={
   "cloud.signIn":"Iniciar sesión en Play Juegos",
   "cloud.synced":"Guardado en la nube",
   "cloud.signInFailed":"No se pudo iniciar sesión",
+  "ui.privacy":"Privacidad",
+  "ui.open":"Política",
 };

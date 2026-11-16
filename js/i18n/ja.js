@@ -404,4 +404,6 @@ L['ja']={
   "cloud.signIn":"Playゲームにログイン",
   "cloud.synced":"クラウドに保存しました",
   "cloud.signInFailed":"ログインできませんでした",
+  "ui.privacy":"プライバシー",
+  "ui.open":"ポリシー",
 };

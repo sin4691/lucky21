@@ -404,4 +404,6 @@ L['en']={
   "cloud.signIn":"Sign in to Play Games",
   "cloud.synced":"Saved to the cloud",
   "cloud.signInFailed":"Couldn’t sign in",
+  "ui.privacy":"Privacy",
+  "ui.open":"Policy",
 };

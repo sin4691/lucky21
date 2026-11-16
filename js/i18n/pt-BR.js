@@ -404,4 +404,6 @@ L['pt-BR']={
   "cloud.signIn":"Entrar no Play Games",
   "cloud.synced":"Salvo na nuvem",
   "cloud.signInFailed":"Não foi possível entrar",
+  "ui.privacy":"Privacidade",
+  "ui.open":"Política",
 };

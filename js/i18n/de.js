@@ -404,4 +404,6 @@ L['de']={
   "cloud.signIn":"Bei Play Spiele anmelden",
   "cloud.synced":"In der Cloud gespeichert",
   "cloud.signInFailed":"Anmeldung fehlgeschlagen",
+  "ui.privacy":"Datenschutz",
+  "ui.open":"Erklärung",
 };

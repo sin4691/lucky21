@@ -404,4 +404,6 @@ L['ko']={
   "cloud.signIn":"Play 게임즈 로그인",
   "cloud.synced":"클라우드에 저장했어요",
   "cloud.signInFailed":"로그인하지 못했어요",
+  "ui.privacy":"개인정보",
+  "ui.open":"처리방침 보기",
 };

@@ -32,6 +32,7 @@ function renderPause(){
     ${IS_APP&&CLOUD.available?`<div class="pz-row"><span>${t('cloud.label')}</span>${CLOUD.signedIn
       ?`<button class="pz-link" id="pzCloud">${t('cloud.on')} · ${t('cloud.syncNow')} ▸</button>`
       :`<button class="pz-link" id="pzCloud">${t('cloud.signIn')} ▸</button>`}</div>`:''}
+    <div class="pz-row"><span>${t('ui.privacy')}</span><button class="pz-link" id="pzPolicy">${t('ui.open')} ▸</button></div>
     ${adsPrivacyRequired?`<div class="pz-row"><span>${t('ads.privacy')}</span><button class="pz-link" id="pzAdPriv">${t('ads.privacyEdit')} ▸</button></div>`:''}
     ${overlayOn?'':`<div class="pz-btns"><button id="pzRules">${t('ui.rules')}</button><button id="pzCol">${t('ui.collection')}</button>${run?`<button id="pzDeck">${t('ui.myDeck')}</button>`:''}</div>`}
     ${run?`<div class="pz-leave">
@@ -48,6 +49,7 @@ function renderPause(){
   if($('#pzCloud'))$('#pzCloud').onclick=async()=>{sfx.click();
     if(!CLOUD.signedIn)return cloudSignIn().then(renderPause);
     const changed=await cloudSync();if(changed&&!inRun()){closePause();title();}toast(t('cloud.synced'));};
+  $('#pzPolicy').onclick=()=>{sfx.click();window.open(PRIVACY_URL,'_blank');};
   if($('#pzAdPriv'))$('#pzAdPriv').onclick=()=>{sfx.click();showAdPrivacy();};
   if($('#pzRules')){
     $('#pzRules').onclick=()=>{closePause();openRules();};

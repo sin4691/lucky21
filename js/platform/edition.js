@@ -6,6 +6,7 @@ const IS_APP=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capa
 const TRIAL_LAST_STAGE=4;   // 웹 체험판: 4스테이지(첫 보스 다음)까지
 const PLAY_URL='https://play.google.com/store/apps/details?id=com.sin4691.lucky21';
 const isTrial=()=>!IS_APP;
+const PRIVACY_URL='https://sin4691.github.io/lucky21/privacy.html';
 
 // 스테이지 클리어 직후 호출. 체험판 끝이면 true를 돌려주고 안내 화면을 띄운다.
 function trialEndCheck(){
