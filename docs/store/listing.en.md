@@ -14,13 +14,13 @@ LUCKY 21: Blackjack Roguelike
 Blackjack meets deckbuilding roguelike. Grow chips × mult with charms!
 ```
 
-## 자세한 설명 (1666/4000)
+## 자세한 설명 (1668/4000)
 
 ```
 Beating the dealer isn't enough. What matters is how big you win.
 
 LUCKY 21 is a single-player card game that combines blackjack with a deckbuilding roguelike.
-Beat the dealer to score your cards' chips × mult, and pass the target score of all 8 stages to win.
+Beat the dealer to score your cards' chips × mult, and pass the target score of all 12 stages to win.
 
 ■ Blackjack with a deck you design
 · You draw from your own deck, separate from the dealer's.
@@ -42,7 +42,7 @@ Beat the dealer to score your cards' chips × mult, and pass the target score of
 · Complete achievements to unlock new decks and charms.
 
 ■ And more
-· Endless mode after clearing stage 8
+· Endless mode after clearing stage 12
 · In-game tutorial for first-time players
 · Demo mode that starts with a finished build
 · Continue anytime, even if you close the app

@@ -5,7 +5,7 @@
 async function stageClear(){
   hideBanner();sfx.big();burst(innerWidth/2,innerHeight*.4,90,['#e8c46a','#fff3c4','#7fe0d4','#ff8a5c'],11);shake(true);
   await sleep(500);
-  if(S.stage===8&&!S.endless)return victory();
+  if(S.stage===FINAL_STAGE&&!S.endless)return victory();
   if(S.boss)achEvent('bossClear');
   const cap=hasCharm('usury')||S.richDeck?10:5;
   const rows=[[S.boss?t('shop.bossClear'):t('shop.stageClear'),S.boss?6:4],[t('shop.handsLeft',{n:S.handsLeft}),S.handsLeft],[t('shop.interest',{cap}),Math.min(cap,Math.floor(S.gold/5))]];
@@ -18,7 +18,7 @@ async function stageClear(){
   const lns=[...document.querySelectorAll('.reward .ln')];
   for(const l of lns){await sleep(220);l.classList.add('on');sfx.gold();}
   S.gold+=sum;renderSide();
-  if(!(S.stage===8&&!S.endless))snapshot('clear');
+  if(!(S.stage===FINAL_STAGE&&!S.endless))snapshot('clear');
   const btn=$('#toShop');btn.disabled=false;btn.onclick=()=>{sfx.click();openShop();};
 }
 function rollOffers(){
@@ -30,14 +30,25 @@ function rollOffers(){
   }
   return out.map(d=>({def:d,sold:false}));
 }
+// 부적이 원하는 카드(want)를 진열에 섞는다. 하트 부적이 있으면 하트 카드, 7 부적이 있으면 7이 자주 나온다.
+function charmWants(){return S.charms.filter(c=>c.want).map(c=>({want:c.want,name:c.name}));}
+function wantedCard(w){
+  if(w.s)return mkCard(rnd(RANKS),w.s);
+  if(w.r)return mkCard(rnd(w.r),rnd(SUITS));
+  if(w.flush){const n={};for(const c of S.myDeck)n[c.s]=(n[c.s]||0)+1;const s=Object.keys(n).sort((a,b)=>n[b]-n[a])[0]||rnd(SUITS);return mkCard(rnd(RANKS),s);}
+  if(w.enh)return mkCard(rnd(RANKS),rnd(SUITS),w.enh);
+  return null; // any·slim 등은 특정 카드가 필요 없음
+}
 function rollCardOffers(){
-  const out=[];
-  for(let i=0;i<2;i++){
-    const enh=Math.random()<.55?rnd(ENH_KEYS):null;
-    const card=mkCard(rnd(RANKS),rnd(SUITS),enh);
-    out.push({kind:'card',card,price:enh?4:2,sold:false});
+  const out=[],wants=charmWants().filter(w=>!w.want.slim&&!w.want.any);
+  for(let i=0;i<3;i++){
+    let card=null,match=null;
+    if(wants.length&&Math.random()<.7){const w=rnd(wants);card=wantedCard(w.want);if(card)match=w.name;}
+    if(!card){const enh=Math.random()<.45?rnd(ENH_KEYS):null;card=mkCard(rnd(RANKS),rnd(SUITS),enh);}
+    out.push({kind:'card',card,price:card.enh?4:2,match,sold:false});
   }
-  out.push({kind:'enh',enh:rnd(ENH_KEYS),price:4,sold:false});
+  const enhWant=wants.find(w=>w.want.enh);
+  out.push({kind:'enh',enh:enhWant&&Math.random()<.7?enhWant.want.enh:rnd(ENH_KEYS),price:4,sold:false});
   out.push({kind:'remove',price:4,sold:false});
   return out;
 }
@@ -76,7 +87,7 @@ function renderShop(){
     if(o.kind==='card'){
       div.appendChild(cardEl(o.card,false));
       title=`${o.card.s}${o.card.r}${o.card.enh?' · '+ENH[o.card.enh].name:''}`;
-      desc=o.card.enh?ENH[o.card.enh].desc:t('shop.addCard');label=t('shop.add',{p:o.price});
+      desc=(o.match?`<span class="match">${t('shop.matched',{name:o.match})}</span>`:'')+(o.card.enh?ENH[o.card.enh].desc:t('shop.addCard'));label=t('shop.add',{p:o.price});
     }else if(o.kind==='enh'){
       div.insertAdjacentHTML('beforeend',`<div class="svc-icon">${ENH[o.enh].tag}</div>`);
       title=t('shop.enhTicket',{name:ENH[o.enh].name});desc=t('shop.enhDesc',{desc:ENH[o.enh].desc});label=t('shop.use',{p:o.price});

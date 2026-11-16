@@ -53,7 +53,7 @@ function resumeRun(){
   if(d.phase==='shop'){renderShop();return;}
   if(d.phase==='clear'){openShop();return;}
   const bossHtml=S.boss?`<div class="next" style="margin-top:12px"><span class="bn">${t('ui.bossLabel',{name:S.boss.name})}</span><br>${S.boss.desc}</div>`:'';
-  openPanel(`<div class="sub">CONTINUE · ${S.stage>8?`ENDLESS STAGE ${S.stage}`:`STAGE ${S.stage} / 8`}</div><h2>${t('ui.continueTitle')}</h2>
+  openPanel(`<div class="sub">CONTINUE · ${S.stage>FINAL_STAGE?`∞ · STAGE ${S.stage}`:`STAGE ${S.stage} / ${FINAL_STAGE}`}</div><h2>${t('ui.continueTitle')}</h2>
     <p>${t('ui.continueInfo',{score:fmt(S.score),target:fmt(S.target),hands:S.handsLeft,gold:S.gold})}</p>${bossHtml}
     <div class="actions"><button class="btn" id="goStage">${t('ui.continue')}</button></div>`);
   $('#goStage').onclick=()=>{sfx.click();closePanel();startHand();};

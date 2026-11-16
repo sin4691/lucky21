@@ -12,7 +12,7 @@ function startStage(){
   $('#pHand').innerHTML='';$('#dHand').innerHTML='';$('#pTot').textContent='';$('#dTot').textContent='';
   renderSide();renderCharms();setCM(0,0);
   const bossHtml=S.boss?`<div class="next" style="margin-top:12px"><span class="bn">${t('ui.bossLabel',{name:S.boss.name})}</span><br>${S.boss.desc}</div>`:'';
-  openPanel(`<div class="sub">${S.stage>8?`ENDLESS · STAGE ${S.stage}`:`STAGE ${S.stage} / 8`}</div><h2>${S.boss?t('ui.bossStage'):t('ui.stageN',{n:S.stage})}</h2>
+  openPanel(`<div class="sub">${S.stage>FINAL_STAGE?`∞ · STAGE ${S.stage}`:`STAGE ${S.stage} / ${FINAL_STAGE}`}</div><h2>${S.boss?t('ui.bossStage'):t('ui.stageN',{n:S.stage})}</h2>
     <p>${t('ui.stageGoal',{hands:S.handsLeft,target:fmt(S.target)})}</p>${bossHtml}
     <div class="actions"><button class="btn" id="goStage">${t('ui.deal')}</button></div>`);
   $('#goStage').onclick=()=>{sfx.click();sfx.shuffle();closePanel();startHand();};
@@ -131,7 +131,7 @@ function trigCharm(id){const el=document.querySelector(`#charmBar .charm[data-id
 async function scoreHand(result){
   const win=WIN_SET.has(result),push=result==='push';
   let chips=0,mult=0;
-  const ctx={result,cards:S.player,dealer:S.dealer,total:total(S.player).t,dealerTotal:total(S.dealer).t,doubled:S.doubled,lastHand:S.handsLeft===1,streak:S.streak,soft:total(S.player).soft&&total(S.player).t<=21,firstHand:S.handNo===0};
+  const ctx={result,cards:S.player,dealer:S.dealer,total:total(S.player).t,dealerTotal:total(S.dealer).t,doubled:S.doubled,lastHand:S.handsLeft===1,handsLeft:S.handsLeft,streak:S.streak,soft:total(S.player).soft&&total(S.player).t<=21,firstHand:S.handNo===0};
   const apply=(e,el)=>{
     if(e.chips){chips+=e.chips;pop(el,`+${e.chips}`,'chip');sfx.chip();}
     if(e.mult){mult+=e.mult;pop(el,t('ui.plusMult',{n:e.mult}),'mult');sfx.mult();}

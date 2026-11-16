@@ -14,13 +14,13 @@ LUCKY 21: Roguelike Blackjack
 Blackjack + roguelike de mazos. ¡Sube fichas × mult. con amuletos!
 ```
 
-## 자세한 설명 (1783/4000)
+## 자세한 설명 (1785/4000)
 
 ```
 Ganar al crupier no basta. Lo que importa es cuánto ganas.
 
 LUCKY 21 es un juego de cartas para un jugador que combina el blackjack con un roguelike de construcción de mazos.
-Gana al crupier para sumar fichas × mult. con tus cartas y supera la meta de las 8 fases para ganar.
+Gana al crupier para sumar fichas × mult. con tus cartas y supera la meta de las 12 fases para ganar.
 
 ■ Blackjack con un mazo que diseñas tú
 · Robas de tu propio mazo, separado del del crupier.
@@ -42,7 +42,7 @@ Gana al crupier para sumar fichas × mult. con tus cartas y supera la meta de la
 · Consigue logros para desbloquear nuevos mazos y amuletos.
 
 ■ Y además
-· Modo infinito tras superar la fase 8
+· Modo infinito tras superar la fase 12
 · Tutorial dentro del juego para quien empieza
 · Modo demo que empieza con una build completa
 · Continúa cuando quieras, aunque cierres la app

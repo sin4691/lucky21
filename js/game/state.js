@@ -14,6 +14,6 @@ function pickBoss(stage){
   const b=rnd(pool.length?pool:BOSSES);S.usedBoss.push(b.id);return b;
 }
 // 스테이지당 기본 핸드 수 (덱·보스 보정 포함, 최소 1)
-const baseHands=()=>Math.max(1,5+(S.handMod||0)-(S.boss?.id==='thin'?1:0));
+const baseHands=()=>Math.max(1,6+(S.handMod||0)-(S.boss?.id==='thin'?1:0));
 const hasCharm=id=>S.charms.some(c=>c.id===id);
 function makeCharm(def){return{...def,val:0};}

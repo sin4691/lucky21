@@ -14,13 +14,13 @@ LUCKY 21: Roguelike Blackjack
 Blackjack + roguelike de baralho. Turbine fichas × mult. com amuletos!
 ```
 
-## 자세한 설명 (1708/4000)
+## 자세한 설명 (1710/4000)
 
 ```
 Vencer o dealer não basta. O que importa é o tamanho da vitória.
 
 LUCKY 21 é um jogo de cartas single-player que junta blackjack com um roguelike de construção de baralho.
-Vença o dealer para marcar fichas × mult. com suas cartas e passe da meta das 8 fases para ganhar.
+Vença o dealer para marcar fichas × mult. com suas cartas e passe da meta das 12 fases para ganhar.
 
 ■ Blackjack com um baralho que você monta
 · Você compra do seu próprio baralho, separado do dealer.
@@ -42,7 +42,7 @@ Vença o dealer para marcar fichas × mult. com suas cartas e passe da meta das 
 · Faça conquistas para desbloquear novos baralhos e amuletos.
 
 ■ E mais
-· Modo infinito depois da fase 8
+· Modo infinito depois da fase 12
 · Tutorial durante o jogo para iniciantes
 · Modo demo que começa com uma build pronta
 · Continue de onde parou, mesmo fechando o app

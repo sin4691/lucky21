@@ -88,10 +88,10 @@ function gameOver(){
 function victory(){
   sfx.big();saveRec(true);clearSave();
   for(let i=0;i<5;i++)setTimeout(()=>burst(Math.random()*innerWidth,innerHeight*.3,60,['#e8c46a','#fff3c4','#7fe0d4','#e6a3ff'],10),i*250);
-  openPanel(`<div class="sub">ALL 8 STAGES CLEARED</div><h1>${t('end.win')}</h1>
+  openPanel(`<div class="sub">ALL ${FINAL_STAGE} STAGES CLEARED</div><h1>${t('end.win')}</h1>
     <p>${t('end.winBest',{n:fmt(S.bestHand),charms:S.charms.map(c=>c.name).join(', ')||t('end.none')})}</p>
     <p style="font-size:13px">${t('end.endlessNote')}</p>
-    <div class="actions"><button class="btn teal" id="endless">${t('end.endless')}<small>ENDLESS</small></button><button class="btn" id="again">${t('end.oneMore')}<small>NEW RUN</small></button></div>`);
+    <div class="actions"><button class="btn teal" id="endless">${t('end.endless')}<small>∞</small></button><button class="btn" id="again">${t('end.oneMore')}<small>NEW RUN</small></button></div>`);
   $('#again').onclick=()=>{sfx.click();title();};
   $('#endless').onclick=()=>{sfx.click();S.endless=true;stageClear();};
 }

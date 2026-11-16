@@ -4,7 +4,7 @@
 /* ---------------- render ---------------- */
 function renderSide(){
   if(S&&S.gold>=25)achEvent('gold');
-  $('#stageV').textContent=S.stage>8?`${S.stage} · ∞`:`${S.stage} / 8`;
+  $('#stageV').textContent=S.stage>FINAL_STAGE?`${S.stage} · ∞`:`${S.stage} / ${FINAL_STAGE}`;
   $('#stageLbl').textContent=S.boss?'BOSS':'';
   $('#targetV').textContent=fmt(S.target);
   $('#scoreV').textContent=fmt(S.score);
