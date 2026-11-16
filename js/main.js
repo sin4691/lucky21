@@ -20,4 +20,6 @@ $('#pauseWrap').addEventListener('click',e=>{if(e.target.id==='pauseWrap')closeP
 
 document.addEventListener('touchstart',e=>{if(!e.target.closest('.charm,.card'))hideTip();},{passive:true});
 addEventListener('scroll',hideTip,{passive:true});
+// 길게 누를 때 나오는 브라우저 메뉴(복사·이미지 저장 등) 막기
+document.addEventListener('contextmenu',e=>{if(!e.target.closest('input,textarea'))e.preventDefault();});
 loadArt().then(title).then(()=>{initAds();initCloud();});
