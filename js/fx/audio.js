@@ -2,10 +2,10 @@
 'use strict';
 
 /* ---------------- audio (WebAudio 합성) ---------------- */
-let AC=null,muted=false;
+let AC=null,muted=false,VOL=1; // VOL: 설정의 소리 크기(0~1)
 function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){AC=null;}}return AC;}
-function tone(f,d=.09,type='triangle',vol=.1,delay=0){const a=ac();if(!a||muted)return;const t=a.currentTime+delay;const o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+.02);}
-function noise(d=.07,vol=.18,freq=2600){const a=ac();if(!a||muted)return;const n=a.sampleRate*d,b=a.createBuffer(1,n,a.sampleRate),ch=b.getChannelData(0);for(let i=0;i<n;i++)ch[i]=(Math.random()*2-1)*Math.pow(1-i/n,2);const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();f.type='bandpass';f.frequency.value=freq;f.Q.value=.8;g.gain.value=vol;s.buffer=b;s.connect(f).connect(g).connect(a.destination);s.start();}
+function tone(f,d=.09,type='triangle',vol=.1,delay=0){const a=ac();if(!a||muted||VOL<=0)return;vol*=VOL;const t=a.currentTime+delay;const o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+.02);}
+function noise(d=.07,vol=.18,freq=2600){const a=ac();if(!a||muted||VOL<=0)return;vol*=VOL;const n=a.sampleRate*d,b=a.createBuffer(1,n,a.sampleRate),ch=b.getChannelData(0);for(let i=0;i<n;i++)ch[i]=(Math.random()*2-1)*Math.pow(1-i/n,2);const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();f.type='bandpass';f.frequency.value=freq;f.Q.value=.8;g.gain.value=vol;s.buffer=b;s.connect(f).connect(g).connect(a.destination);s.start();}
 let pitch=0;
 const sfx={
   card:()=>noise(.08,.22,2200+Math.random()*900),

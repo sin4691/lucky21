@@ -3,7 +3,7 @@
 
 /* ---------------- flow ---------------- */
 function startStage(){
-  S.boss=S.nextBoss;S.target=targetOf(S.stage);S.handNo=0;
+  S.over=false;S.boss=S.nextBoss;S.target=targetOf(S.stage);S.handNo=0;
   if(hasCharm('magician')&&S.tricks.length<2){const t=rnd(TRICKS);S.tricks.push(t);discover('tricks',t.id);setTimeout(()=>toast(window.t('ui.magician',{name:t.name})),300);}
   if(S.boss)discover('bosses',S.boss.id);
   achEvent('stage');
@@ -93,6 +93,7 @@ async function afterPlayerDraw(){
   S.busy=false;updateButtons();
 }
 async function charmFlash(id,text){
+  (S.trig=S.trig||{})[id]=(S.trig[id]||0)+1;
   const el=document.querySelector(`#charmBar .charm[data-id="${id}"]`);if(!el)return;
   el.classList.remove('trig');void el.offsetWidth;el.classList.add('trig');pop(el,text,'info',-6);sfx.gold();await sleep(520);
 }
@@ -103,7 +104,7 @@ function showBanner(result){
 function hideBanner(){$('#banner').classList.remove('on');}
 
 async function finish(result){
-  S.busy=true;updateButtons();
+  S.busy=true;S.dirty=true;updateButtons(); // dirty: 다음 자동 저장 전까지는 나가기 금지
   await reveal();
   if(result==='bust'&&hasCharm('insure')&&!S.insuranceUsed){S.insuranceUsed=true;showBanner('bust');await charmFlash('insure',t('ui.insured'));result='push';}
   if(result==='push'&&hasCharm('pushmaster')){showBanner('push');await charmFlash('pushmaster',t('ui.pushWin'));result='win';}
@@ -112,7 +113,9 @@ async function finish(result){
   if(WIN_SET.has(result)){S.streak++;}else if(result!=='push'){S.streak=0;}
   if(result==='bj')burst(innerWidth/2,innerHeight/2,50,['#e8c46a','#fff','#7fe0d4'],8);
   if(result==='bj')S.bjCount=(S.bjCount||0)+1;
+  buzz(result==='bj'?'success':result==='bust'?'heavy':WIN_SET.has(result)?'light':'');
   const pts=await scoreHand(result);
+  statHand(result,pts);if(pts>=1000)buzz('medium');
   achEvent('hand',{pts,result,win:WIN_SET.has(result),cards:[...S.player]});
   S.handsLeft--;S.handNo++;renderSide();
   const box=$('#cmWrap').closest('.box');
@@ -127,8 +130,9 @@ async function finish(result){
   startHand();
 }
 
-function trigCharm(id){const el=document.querySelector(`#charmBar .charm[data-id="${id}"]`);if(el){el.classList.remove('trig');void el.offsetWidth;el.classList.add('trig');}return el;}
+function trigCharm(id){(S.trig=S.trig||{})[id]=(S.trig[id]||0)+1;const el=document.querySelector(`#charmBar .charm[data-id="${id}"]`);if(el){el.classList.remove('trig');void el.offsetWidth;el.classList.add('trig');}return el;}
 async function scoreHand(result){
+  S.lastResult=result;
   const win=WIN_SET.has(result),push=result==='push';
   let chips=0,mult=0;
   const ctx={result,cards:S.player,dealer:S.dealer,total:total(S.player).t,dealerTotal:total(S.dealer).t,doubled:S.doubled,lastHand:S.handsLeft===1,handsLeft:S.handsLeft,streak:S.streak,soft:total(S.player).soft&&total(S.player).t<=21,firstHand:S.handNo===0};
@@ -207,7 +211,9 @@ async function award(chips,mult){
   else{sfx.win();const c=center(b);burst(c.x,c.y,26);}
   await sleep(300);
   await flyDots(b,$('#scoreV'),Math.min(18,6+Math.floor(heat*12)));
-  const from=S.score;S.score+=pts;S.bestHand=Math.max(S.bestHand,pts);
+  const from=S.score;S.score+=pts;
+  if(pts>S.bestHand)S.bestInfo={pts,result:S.lastResult||"win",st:S.stage,cards:S.player.map(c=>({s:c.s,r:c.r}))};
+  S.bestHand=Math.max(S.bestHand,pts);
   bump($('#scoreV'));await countTo($('#scoreV'),from,S.score,500);
   renderSide();
   setTimeout(()=>$('#cmWrap').classList.remove('hot'),900);

@@ -10,6 +10,7 @@
 const SAVE_KEY='lucky21.save';
 const plainCard=c=>({r:c.r,s:c.s,enh:c.enh||null,id:c.id});
 function snapshot(phase){
+  if(S)S.dirty=false;
   if(!S||S.demo)return;
   const pend=S.player.filter(c=>!c.broken);
   const d={v:1,phase,at:Date.now(),
@@ -22,6 +23,7 @@ function snapshot(phase){
     score:S.score,target:S.target,handsLeft:S.handsLeft,handNo:S.handNo,insuranceUsed:!!S.insuranceUsed,
     draw:S.draw.map(plainCard),discard:[...S.discard,...(phase==='hand'?pend:[])].map(plainCard),shoe:S.shoe.map(plainCard),
     rerollCost:S.rerollCost,
+    log:S.log||[],trig:S.trig||{},bestInfo:S.bestInfo||null,counted:!!S.counted,
     offers:(S.offers||[]).map(o=>({id:o.def.id,sold:o.sold})),
     cardOffers:(S.cardOffers||[]).map(o=>({...o,card:o.card?plainCard(o.card):undefined})),
     trickOffers:(S.trickOffers||[]).map(o=>({id:o.t.id,sold:o.sold})),
@@ -35,7 +37,7 @@ function restore(d){
   const byId=new Map();const card=c=>{if(byId.has(c.id))return byId.get(c.id);const x={...c};byId.set(c.id,x);return x;};
   Object.assign(S,{deckId:d.deckId||'classic',handMod:d.handMod||0,richDeck:!!d.richDeck,bjCount:d.bjCount||0,stage:d.stage,gold:d.gold,streak:d.streak,bestHand:d.bestHand,usedBoss:d.usedBoss||[],endless:d.endless,
     tut:d.tut,tutSeen:d.tutSeen||{},score:d.score,target:d.target,handsLeft:d.handsLeft,handNo:d.handNo||0,insuranceUsed:d.insuranceUsed,
-    rerollCost:d.rerollCost||2});
+    rerollCost:d.rerollCost||2,log:d.log||[],trig:d.trig||{},bestInfo:d.bestInfo||null,counted:!!d.counted,over:false});
   S.charms=d.charms.map(c=>{const def=CHARMS.find(x=>x.id===c.id);return def&&{...makeCharm(def),val:c.val||0};}).filter(Boolean);
   S.tricks=d.tricks.map(id=>TRICKS.find(t=>t.id===id)).filter(Boolean);
   S.myDeck=d.myDeck.map(card);S.draw=d.draw.map(card);S.discard=d.discard.map(card);S.shoe=d.shoe.map(c=>({...c}));

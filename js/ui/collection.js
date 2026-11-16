@@ -39,10 +39,10 @@ function unknownCharmEl(locked){
   d.innerHTML=`<div class="glyph">${locked?'✕':'?'}</div><div class="cname">${locked?t('col.locked'):t('col.unknown')}</div>`;
   return d;
 }
-// 탭 3개(업적 / 부적 / 트릭·보스)로 나눠 모바일에서도 한 화면에 들어가게 한다
+// 탭 4개(업적 / 부적 / 트릭·보스 / 통계)로 나눠 모바일에서도 한 화면에 들어가게 한다
 function openCollection(back,tab='ach'){
   const m=META,nCh=m.charms.length,nTr=m.tricks.length,nBo=m.bosses.length;
-  const tabs=[['ach',t('col.tabAch',{a:m.achs.length,b:ACHIEVEMENTS.length})],['charm',t('col.tabCharm',{a:nCh,b:CHARMS.length})],['etc',t('col.tabEtc',{a:nTr+nBo,b:TRICKS.length+BOSSES.length})]]
+  const tabs=[['ach',t('col.tabAch',{a:m.achs.length,b:ACHIEVEMENTS.length})],['charm',t('col.tabCharm',{a:nCh,b:CHARMS.length})],['etc',t('col.tabEtc',{a:nTr+nBo,b:TRICKS.length+BOSSES.length})],['stats',t('col.tabStats')]]
     .map(([id,label])=>`<button class="col-tab${id===tab?' on':''}" data-tab="${id}">${label}</button>`).join('');
   let body='';
   if(tab==='ach'){
@@ -52,6 +52,11 @@ function openCollection(back,tab='ach'){
     }).join('')}</div>`;
   }else if(tab==='charm'){
     body=`<div class="col-grid" id="colCharms"></div><p class="col-note">${t('col.charmNote')}</p>`;
+  }else if(tab==='stats'){
+    const s=STATS,wr=s.hands?Math.round(s.wins/s.hands*100):0;
+    const rows=[['runs',s.runs],['clears',s.clears],['giveups',s.giveups],['bestStage',s.bestStage?`${s.bestStage} / ${FINAL_STAGE}`:'-'],['bestEndless',s.bestEndless||'-'],
+      ['hands',fmt(s.hands)],['winRate',s.hands?wr+'%':'-'],['bjs',fmt(s.bjs)],['busts',fmt(s.busts)],['bestHand',fmt(s.bestHand)],['totalScore',fmt(s.totalScore)]];
+    body=`<div class="stat-grid">${rows.map(([k,v])=>`<div class="stat"><span>${t('stats.'+k)}</span><b>${v}</b></div>`).join('')}</div>`;
   }else{
     body=`<div class="sec">${t('col.tricks')}</div><div class="col-grid" id="colTricks"></div>
       <div class="sec">${t('col.bosses')}</div><div class="bosses">${BOSSES.map(b=>m.bosses.includes(b.id)

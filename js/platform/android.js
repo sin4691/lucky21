@@ -11,15 +11,15 @@ function confirmBox(title,text,yes,no,onYes){
 const CapApp=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.App;
 function onBack(){
   if($('#confirmWrap').classList.contains('on')){$('#cNo').click();return;}
-  if($('#side').classList.contains('menu')){$('#side').classList.remove('menu');return;}
+  if(isPauseOpen()){closePause();return;}
   if(S&&S.coaching){$('#coachOk')&&$('#coachOk').click();return;}
   if($('#overlay').classList.contains('on')){
-    // 닫기·취소가 있는 창(규칙, 덱 보기, 카드 선택)은 그 창만 닫는다
-    const closer=$('#cl')||$('#deckClose')||$('#pickCancel');
+    // 닫기·취소가 있는 창(규칙, 덱 보기, 카드 선택, 도감)은 그 창만 닫는다
+    const closer=$('#cl')||$('#deckClose')||$('#pickCancel')||$('#colClose')||$('#langClose')||$('#deckBack');
     if(closer){closer.click();return;}
   }
-  const saved=S&&!S.demo&&loadSave();
-  confirmBox(t('ui.exitQ'),S&&S.demo?t('ui.exitDemo'):saved?t('ui.exitSaved'):'',
-    t('ui.exit'),t('ui.continue'),()=>{if(CapApp&&CapApp.exitApp)CapApp.exitApp();});
+  // 판 진행 중이면 일시정지 메뉴, 타이틀·결과 화면이면 앱 종료 확인
+  if(inRun()){openPause();return;}
+  confirmBox(t('ui.exitQ'),'',t('ui.exit'),t('ui.cancel'),()=>{if(CapApp&&CapApp.exitApp)CapApp.exitApp();});
 }
 if(CapApp&&CapApp.addListener)CapApp.addListener('backButton',onBack);

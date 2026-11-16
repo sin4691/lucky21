@@ -3,6 +3,7 @@
 
 /* ---------------- stage clear / shop ---------------- */
 async function stageClear(){
+  logStage(true);buzz('light');
   hideBanner();sfx.big();burst(innerWidth/2,innerHeight*.4,90,['#e8c46a','#fff3c4','#7fe0d4','#ff8a5c'],11);shake(true);
   await sleep(500);
   if(S.stage===FINAL_STAGE&&!S.endless)return victory();

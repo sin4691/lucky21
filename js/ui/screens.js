@@ -53,7 +53,7 @@ function openLangPicker(back){
 }
 function title(){
   const sv=loadSave();
-  newRun();renderSide();renderCharms();$('.logo').innerHTML='LUCKY 21<small>BLACKJACK ROGUELIKE</small>';
+  newRun();S.over=true;renderSide();renderCharms();$('.logo').innerHTML='LUCKY 21<small>BLACKJACK ROGUELIKE</small>';
   openPanel(`<button class="linkbtn lang-btn" id="titleLang">🌐 ${LANGS.find(l=>l[0]===LANG)[1]}</button><h1 class="brand">LUCKY 21</h1><div class="sub">BLACKJACK ROGUELIKE</div>
     <ul class="pitch">
       <li>${t('title.p1')}</li>
@@ -77,21 +77,50 @@ function setupDemo(){
   renderCharms();renderSide();
   $('.logo').innerHTML='LUCKY 21<span class="demo-badge">DEMO</span><small>BLACKJACK ROGUELIKE</small>';
 }
-function gameOver(){
-  hideBanner();sfx.lose();saveRec(false);clearSave();
-  openPanel(`<div class="sub">BANKRUPT</div><h1 style="color:#ff8a70">${t('end.bankrupt')}</h1>
-    <p>${t('end.stoppedAt',{endless:S.endless?t('end.endlessPre'):'',n:S.stage,score:fmt(S.score),target:fmt(S.target)})}</p>
-    <p>${t('end.best',{n:fmt(S.bestHand),charms:S.charms.map(c=>c.name).join(', ')||t('end.none')})}</p>
-    <div class="actions"><button class="btn" id="again">${t('end.again')}</button></div>`);
+/* ---------------- 판 결과 요약 ---------------- */
+// 스테이지가 끝날 때마다 기록: 점수·목표·보스·통과 여부
+function logStage(cleared){
+  S.log=S.log||[];const e={st:S.stage,sc:Math.floor(S.score),tg:S.target,boss:!!S.boss,ok:cleared};
+  const last=S.log[S.log.length-1];if(last&&last.st===e.st)S.log[S.log.length-1]=e;else S.log.push(e);
+}
+function summaryHtml(){
+  const deck=DECKS.find(d=>d.id===(S.deckId||'classic'));
+  const stages=(S.log||[]).map(l=>`<span class="sm-st${l.ok?' ok':' fail'}${l.boss?' boss':''}" title="${fmt(l.sc)} / ${fmt(l.tg)}"><b>${l.st}</b>${fmt(l.sc)}</span>`).join('');
+  const bh=S.bestInfo;
+  const best=bh?`<div class="sm-best"><span class="sm-cards">${bh.cards.map(c=>`<i class="${c.s==='♥'||c.s==='♦'?'red':''}">${c.s}${c.r}</i>`).join('')}</span><b class="gold">${fmt(bh.pts)}</b><small>${t('res.'+bh.result)} · STAGE ${bh.st}</small></div>`:`<span class="muted">${t('summary.none')}</span>`;
+  const top=Object.entries(S.trig||{}).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id,n])=>{const c=CHARMS.find(x=>x.id===id);return c?`<span class="sm-charm">${c.name} <b>${t('summary.times',{n})}</b></span>`:'';}).join('');
+  return `<div class="summary">
+    <div class="sm-row"><span class="k">${t('summary.deck')}</span><span>${deck?deck.name:''}</span></div>
+    <div class="sm-row col"><span class="k">${t('summary.stages')}</span><div class="sm-stages">${stages||`<span class="muted">${t('summary.none')}</span>`}</div></div>
+    <div class="sm-row col"><span class="k">${t('summary.bestHand')}</span>${best}</div>
+    <div class="sm-row col"><span class="k">${t('summary.topCharms')}</span><div class="sm-charms">${top||`<span class="muted">${t('summary.none')}</span>`}</div></div>
+  </div>`;
+}
+// kind: 'lose' 파산 / 'giveup' 포기 / 'win' 12스테이지 클리어
+function endScreen(kind){
+  const head=kind==='win'?`<div class="sub">ALL ${FINAL_STAGE} STAGES CLEARED</div><h1>${t('end.win')}</h1>`
+    :kind==='giveup'?`<div class="sub">GAVE UP</div><h1 style="color:#ff8a70">${t('end.gaveUp')}</h1>`
+    :`<div class="sub">BANKRUPT</div><h1 style="color:#ff8a70">${t('end.bankrupt')}</h1>`;
+  const line=kind==='win'?'':`<p>${t('end.stoppedAt',{endless:S.endless?t('end.endlessPre'):'',n:S.stage,score:fmt(S.score),target:fmt(S.target)})}</p>`;
+  const btns=kind==='win'
+    ?`<button class="btn teal" id="endless">${t('end.endless')}<small>∞</small></button><button class="btn" id="again">${t('end.oneMore')}<small>NEW RUN</small></button>`
+    :`<button class="btn" id="again">${t('end.again')}</button>`;
+  openPanel(`${head}${line}${summaryHtml()}${kind==='win'?`<p style="font-size:13px">${t('end.endlessNote')}</p>`:''}
+    <div class="actions">${btns}</div>`,'end');
   $('#again').onclick=()=>{sfx.click();title();};
+  if(kind==='win')$('#endless').onclick=()=>{sfx.click();S.over=false;S.endless=true;stageClear();};
+}
+function gameOver(){
+  S.over=true;hideBanner();sfx.lose();buzz('error');logStage(false);saveRec(false);statRunEnd('lose');clearSave();
+  endScreen('lose');
 }
 function victory(){
-  sfx.big();saveRec(true);clearSave();
+  S.over=true;sfx.big();buzz('success');saveRec(true);statRunEnd('clear');clearSave();
   for(let i=0;i<5;i++)setTimeout(()=>burst(Math.random()*innerWidth,innerHeight*.3,60,['#e8c46a','#fff3c4','#7fe0d4','#e6a3ff'],10),i*250);
-  openPanel(`<div class="sub">ALL ${FINAL_STAGE} STAGES CLEARED</div><h1>${t('end.win')}</h1>
-    <p>${t('end.winBest',{n:fmt(S.bestHand),charms:S.charms.map(c=>c.name).join(', ')||t('end.none')})}</p>
-    <p style="font-size:13px">${t('end.endlessNote')}</p>
-    <div class="actions"><button class="btn teal" id="endless">${t('end.endless')}<small>∞</small></button><button class="btn" id="again">${t('end.oneMore')}<small>NEW RUN</small></button></div>`);
-  $('#again').onclick=()=>{sfx.click();title();};
-  $('#endless').onclick=()=>{sfx.click();S.endless=true;stageClear();};
+  endScreen('win');
+}
+function openRules(){
+  sfx.click();
+  openPanel(`<h2>${t('ui.rules')}</h2>${rulesHtml()}<div class="actions"><button class="btn teal small" id="tutAgain">${t('ui.tutAgain')}</button><button class="btn" id="cl">${t('ui.close')}</button></div>`);$('#cl').onclick=closePanel;
+  $('#tutAgain').onclick=()=>{setTutDone(false);S.tut=!S.demo;S.tutSeen={};closePanel();toast(S.demo?t('ui.tutDemoToast'):t('ui.tutAgainToast'));};
 }
