@@ -406,4 +406,9 @@ L['es']={
   "cloud.signInFailed":"No se pudo iniciar sesión",
   "ui.privacy":"Privacidad",
   "ui.open":"Política",
+  "title.daily":"Reto diario",
+  "title.dailySub":"Semilla de hoy",
+  "title.dailyBest":"Hoy: fase {n}",
+  "title.dailyClear":"¡Superado hoy!",
+  "daily.overwrite":"Se reemplazará tu partida guardada. ¿Empezar el reto diario de hoy? Todos reciben el mismo orden de mazo y tienda.",
 };

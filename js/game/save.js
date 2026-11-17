@@ -15,6 +15,7 @@ function snapshot(phase){
   const pend=S.player.filter(c=>!c.broken);
   const d={v:1,phase,at:Date.now(),
     deckId:S.deckId,handMod:S.handMod||0,richDeck:!!S.richDeck,bjCount:S.bjCount||0,
+    daily:S.daily||null,rng:RNG.seeded?RNG.s:null,
     stage:S.stage,gold:S.gold,streak:S.streak,bestHand:S.bestHand,usedBoss:S.usedBoss,endless:S.endless,
     tut:S.tut,tutSeen:S.tutSeen,
     charms:S.charms.map(c=>({id:c.id,val:c.val})),tricks:S.tricks.map(t=>t.id),
@@ -34,7 +35,9 @@ function snapshot(phase){
 function loadSave(){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY));return d&&d.v===1?d:null;}catch(e){return null;}}
 function clearSave(){try{localStorage.removeItem(SAVE_KEY);localStorage.setItem('lucky21.saveCleared',String(Date.now()));}catch(e){}cloudPush();}
 function restore(d){
-  newRun();
+  newRun();S.daily=d.daily||null;
+  // newRun이 보스를 뽑느라 난수를 쓰므로, 저장된 난수 상태는 그 다음에 되돌린다
+  if(d.daily&&d.rng!=null){RNG.seeded=true;RNG.s=d.rng;}else unseedRng();
   const byId=new Map();const card=c=>{if(byId.has(c.id))return byId.get(c.id);const x={...c};byId.set(c.id,x);return x;};
   Object.assign(S,{deckId:d.deckId||'classic',handMod:d.handMod||0,richDeck:!!d.richDeck,bjCount:d.bjCount||0,stage:d.stage,gold:d.gold,streak:d.streak,bestHand:d.bestHand,usedBoss:d.usedBoss||[],endless:d.endless,
     tut:d.tut,tutSeen:d.tutSeen||{},score:d.score,target:d.target,handsLeft:d.handsLeft,handNo:d.handNo||0,insuranceUsed:d.insuranceUsed,
@@ -51,7 +54,7 @@ function restore(d){
 }
 function resumeRun(){
   const d=loadSave();if(!d){title();return;}
-  restore(d);renderSide();renderCharms();setCM(0,0);
+  restore(d);renderSide();renderCharms();setCM(0,0);setLogoBadge();
   $('#pHand').innerHTML='';$('#dHand').innerHTML='';$('#pTot').textContent='';$('#dTot').textContent='';
   if(d.phase==='shop'){renderShop();return;}
   if(d.phase==='clear'){openShop();return;}

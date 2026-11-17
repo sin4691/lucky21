@@ -406,4 +406,9 @@ L['zh-Hant']={
   "cloud.signInFailed":"無法登入",
   "ui.privacy":"隱私權",
   "ui.open":"政策",
+  "title.daily":"每日挑戰",
+  "title.dailySub":"今日種子",
+  "title.dailyBest":"今日最佳 第 {n} 關",
+  "title.dailyClear":"今日已通關！",
+  "daily.overwrite":"進行中的對局會被清除。要開始今日的每日挑戰嗎？所有人都會拿到相同的牌序與商店。",
 };

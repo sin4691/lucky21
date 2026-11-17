@@ -170,11 +170,11 @@ async function scoreHand(result){
     if(win&&!sealed){
       if(c.enh==='gold'){apply({mult:4},el);await sleep(280);}
       else if(c.enh==='gem'){apply({chips:30},el);await sleep(280);}
-      else if(c.enh==='glass'){apply({xmult:2},el);await sleep(280);if(Math.random()<.25&&!hasCharm('glassheart'))c.broken=true;}
+      else if(c.enh==='glass'){apply({xmult:2},el);await sleep(280);if(rand()<.25&&!hasCharm('glassheart'))c.broken=true;}
       else if(c.enh==='lucky'){
         let hit=false;
-        if(Math.random()<.2){apply({mult:20},el);hit=true;await sleep(280);}
-        if(Math.random()<.15){apply({gold:4},el);hit=true;await sleep(280);}
+        if(rand()<.2){apply({mult:20},el);hit=true;await sleep(280);}
+        if(rand()<.15){apply({gold:4},el);hit=true;await sleep(280);}
         if(hit){const p=center(el);burst(p.x,p.top,18,['#7fd47f','#d6ffd0','#e8c46a'],5);}
       }
       for(const ch of S.charms){

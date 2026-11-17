@@ -33,6 +33,7 @@ function statHand(result,pts){
 }
 function statRunEnd(kind){ // kind: 'clear' | 'lose' | 'giveup'
   if(!S||S.demo)return;
+  if(S.daily)dailyResult(kind,!S.counted);
   if(!S.counted){S.counted=true;STATS.runs++;if(kind==='clear')STATS.clears++;if(kind==='giveup')STATS.giveups++;}
   STATS.bestStage=Math.max(STATS.bestStage,Math.min(S.stage,FINAL_STAGE));
   if(S.endless)STATS.bestEndless=Math.max(STATS.bestEndless,S.stage);

@@ -53,7 +53,7 @@ function openLangPicker(back){
 }
 function title(){
   const sv=loadSave();
-  newRun();S.over=true;renderSide();renderCharms();$('.logo').innerHTML='LUCKY 21<small>BLACKJACK ROGUELIKE</small>';
+  unseedRng();newRun();S.over=true;renderSide();renderCharms();$('.logo').innerHTML='LUCKY 21<small>BLACKJACK ROGUELIKE</small>';
   openPanel(`<button class="linkbtn lang-btn" id="titleLang">🌐 ${LANGS.find(l=>l[0]===LANG)[1]}</button><h1 class="brand">LUCKY 21</h1><div class="sub">BLACKJACK ROGUELIKE${isTrial()?` · <span class="trial-badge">${t('trial.badge',{n:TRIAL_LAST_STAGE})}</span>`:''}</div>
     <ul class="pitch">
       <li>${t('title.p1')}</li>
@@ -62,11 +62,12 @@ function title(){
     </ul>
     <p class="pitch-note">${t('title.note')}</p>
     <div class="actions" style="justify-content:space-between">${recHtml()||'<span></span>'}
-      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end"><button class="btn teal" id="demo">${t('title.demo')}<small>${t('title.demoSub')}</small></button>${sv?`<button class="btn" id="cont">${t('title.cont')}<small>STAGE ${sv.stage}${sv.phase==='shop'||sv.phase==='clear'?t('title.shop'):''}</small></button>`:''}<button class="btn" id="go">${sv?t('title.newGame'):t('title.start')}<small>NEW RUN</small></button></div></div>`,'title');
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end"><button class="btn teal" id="demo">${t('title.demo')}<small>${t('title.demoSub')}</small></button><button class="btn" id="daily">${t('title.daily')}<small>${dailySubText()}</small></button>${sv?`<button class="btn" id="cont">${t('title.cont')}<small>STAGE ${sv.stage}${sv.phase==='shop'||sv.phase==='clear'?t('title.shop'):''}</small></button>`:''}<button class="btn" id="go">${sv?t('title.newGame'):t('title.start')}<small>NEW RUN</small></button></div></div>`,'title');
   if(sv)$('#cont').onclick=()=>{ac();sfx.click();resumeRun();};
   $('#titleLang').onclick=()=>{sfx.click();openLangPicker(title);};
   $('#go').onclick=()=>{ac();sfx.click();openDeckSelect(sv);};
   $('#demo').onclick=()=>{ac();sfx.click();setupDemo();startStage();};
+  $('#daily').onclick=()=>{ac();sfx.click();startDaily();};
 }
 function setupDemo(){
   S.demo=true;S.gold=15;
@@ -90,6 +91,7 @@ function summaryHtml(){
   const best=bh?`<div class="sm-best"><span class="sm-cards">${bh.cards.map(c=>`<i class="${c.s==='♥'||c.s==='♦'?'red':''}">${c.s}${c.r}</i>`).join('')}</span><b class="gold">${fmt(bh.pts)}</b><small>${t('res.'+bh.result)} · STAGE ${bh.st}</small></div>`:`<span class="muted">${t('summary.none')}</span>`;
   const top=Object.entries(S.trig||{}).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id,n])=>{const c=CHARMS.find(x=>x.id===id);return c?`<span class="sm-charm">${c.name} <b>${t('summary.times',{n})}</b></span>`:'';}).join('');
   return `<div class="summary">
+    ${S.daily?`<div class="sm-row"><span class="k">${t('title.daily')}</span><span>${S.daily}</span></div>`:''}
     <div class="sm-row"><span class="k">${t('summary.deck')}</span><span>${deck?deck.name:''}</span></div>
     <div class="sm-row col"><span class="k">${t('summary.stages')}</span><div class="sm-stages">${stages||`<span class="muted">${t('summary.none')}</span>`}</div></div>
     <div class="sm-row col"><span class="k">${t('summary.bestHand')}</span>${best}</div>

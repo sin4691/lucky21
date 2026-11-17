@@ -27,7 +27,7 @@ function rollOffers(){
   const pool=CHARMS.filter(c=>!hasCharm(c.id)&&(S.demo||isCharmUnlocked(c.id)));const out=[];
   const w={1:6,2:3,3:1};
   while(out.length<3&&pool.length){
-    const tot=pool.reduce((a,c)=>a+w[c.rar],0);let r=Math.random()*tot;
+    const tot=pool.reduce((a,c)=>a+w[c.rar],0);let r=rand()*tot;
     const i=pool.findIndex(c=>(r-=w[c.rar])<0);out.push(pool.splice(i<0?0:i,1)[0]);
   }
   return out.map(d=>({def:d,sold:false}));
@@ -45,12 +45,12 @@ function rollCardOffers(){
   const out=[],wants=charmWants().filter(w=>!w.want.slim&&!w.want.any);
   for(let i=0;i<3;i++){
     let card=null,match=null;
-    if(wants.length&&Math.random()<.7){const w=rnd(wants);card=wantedCard(w.want);if(card)match=w.name;}
-    if(!card){const enh=Math.random()<.45?rnd(ENH_KEYS):null;card=mkCard(rnd(RANKS),rnd(SUITS),enh);}
+    if(wants.length&&rand()<.7){const w=rnd(wants);card=wantedCard(w.want);if(card)match=w.name;}
+    if(!card){const enh=rand()<.45?rnd(ENH_KEYS):null;card=mkCard(rnd(RANKS),rnd(SUITS),enh);}
     out.push({kind:'card',card,price:card.enh?4:2,match,sold:false});
   }
   const enhWant=wants.find(w=>w.want.enh);
-  out.push({kind:'enh',enh:enhWant&&Math.random()<.7?enhWant.want.enh:rnd(ENH_KEYS),price:4,sold:false});
+  out.push({kind:'enh',enh:enhWant&&rand()<.7?enhWant.want.enh:rnd(ENH_KEYS),price:4,sold:false});
   out.push({kind:'remove',price:4,sold:false});
   return out;
 }
@@ -58,12 +58,37 @@ function rollTrickOffers(){return shuffle([...TRICKS]).slice(0,2).map(t=>({t,sol
 function openShop(){
   S.stage++;S.nextBoss=pickBoss(S.stage);S.rerollCost=2;S.adReroll=false;S.offers=rollOffers();S.cardOffers=rollCardOffers();S.trickOffers=rollTrickOffers();renderShop();
 }
+/* ---------- 좁은 화면: 상품은 그림·이름·가격만, 누르면 설명과 구매 버튼이 아래에서 올라온다 ---------- */
+const compactShop=()=>matchMedia('(max-width:820px),(orientation:landscape) and (max-height:520px)').matches;
+function offerTap(div,b){
+  div.addEventListener('click',e=>{
+    if(!compactShop()||e.target.closest('button'))return;
+    e.stopPropagation();hideTip();openOfferSheet(div,b);
+  });
+}
+function closeOfferSheet(){const s=$('#offerSheet');if(s)s.remove();}
+function openOfferSheet(div,b){
+  closeOfferSheet();sfx.click();
+  const icon=div.firstElementChild.cloneNode(true);icon.classList.remove('tipped');
+  const pick=sel=>{const el=div.querySelector(sel);return el?el.outerHTML:'';};
+  const wrap=document.createElement('div');wrap.id='offerSheet';
+  wrap.innerHTML=`<div class="os-box"><div class="os-top"><div class="os-icon"></div><div class="os-text">${pick('.rar')}${pick('.on')}</div></div>
+    ${pick('.od')}<div class="actions"><button class="btn small" id="osClose">${t('ui.close')}</button><button class="btn" id="osBuy"></button></div></div>`;
+  wrap.querySelector('.os-icon').appendChild(icon);
+  const buy=wrap.querySelector('#osBuy');buy.textContent=b.textContent;buy.disabled=b.disabled;
+  document.body.appendChild(wrap);
+  wrap.onclick=e=>{if(e.target===wrap)closeOfferSheet();};
+  $('#osClose').onclick=()=>{sfx.click();closeOfferSheet();};
+  buy.onclick=()=>{closeOfferSheet();b.click();};
+}
+
 function renderShop(){
+  closeOfferSheet();
   const nb=S.nextBoss;
   openPanel(`<div class="shop-head"><div><div class="sub">SHOP</div><h2>${t('shop.title')}</h2></div><div class="purse">${S.gold}G</div></div>
     <div class="sec">${t('shop.charms',{n:S.charms.length})}</div>
     <div class="offers" id="offers"></div>
-    <div class="actions" style="justify-content:flex-start;margin-top:0"><button class="btn teal small" id="reroll">${t('shop.reroll',{cost:S.rerollCost})}</button>${canShowAds()&&!S.adReroll?`<button class="btn small" id="adReroll">▶ ${t('ads.freeReroll')}<small>AD</small></button>`:''}</div>
+    <div class="actions" style="justify-content:flex-start;margin-top:0"><button class="btn teal small" id="reroll">${t('shop.reroll',{cost:S.rerollCost})}</button>${canShowAds()&&!S.adReroll?`<button class="btn small" id="adReroll">▶ ${t('ads.freeReroll')}</button>`:''}</div>
     <div class="splitrow"><div><div class="sec">${t('shop.cards',{n:S.myDeck.length})} <button class="linkbtn" id="shopDeck" style="margin-left:8px">${t('ui.viewDeck')}</button></div>
     <div class="cardoffers" id="cardOffers"></div></div>
     <div><div class="sec">${t('shop.tricks',{n:S.tricks.length})}</div>
@@ -80,7 +105,7 @@ function renderShop(){
     const b=document.createElement('button');b.className='btn small';b.textContent=o.sold?t('shop.sold'):t('shop.buy',{p:d.price});
     b.disabled=o.sold||S.gold<d.price||S.charms.length>=5;
     b.onclick=()=>{if(o.sold||S.gold<d.price||S.charms.length>=5)return;S.gold-=d.price;S.charms.push(makeCharm(d));discover('charms',d.id);o.sold=true;sfx.buy();const c=center(b);burst(c.x,c.y,30);renderCharms();renderSide();renderShop();};
-    div.appendChild(b);box.appendChild(div);
+    div.appendChild(b);box.appendChild(div);offerTap(div,b);
   });
   const cbox=$('#cardOffers');
   S.cardOffers.forEach(o=>{
@@ -113,7 +138,7 @@ function renderShop(){
           toast(t('shop.removed',{cards:cs.map(c=>c.s+c.r).join(', ')}));renderSide();renderShop();});
       }
     };
-    div.appendChild(b);cbox.appendChild(div);
+    div.appendChild(b);cbox.appendChild(div);offerTap(div,b);
   });
   const tbox=$('#trickOffers');
   S.trickOffers.forEach(o=>{
@@ -123,7 +148,7 @@ function renderShop(){
     const b=document.createElement('button');b.className='btn small';b.textContent=o.sold?window.t('shop.done'):window.t('shop.buy',{p:t.price});
     b.disabled=o.sold||S.gold<t.price||S.tricks.length>=2;
     b.onclick=()=>{if(o.sold||S.gold<t.price||S.tricks.length>=2)return;S.gold-=t.price;S.tricks.push(t);discover('tricks',t.id);o.sold=true;sfx.buy();renderCharms();renderSide();renderShop();};
-    div.appendChild(b);tbox.appendChild(div);
+    div.appendChild(b);tbox.appendChild(div);offerTap(div,b);
   });
   const own=$('#owned');
   if(!S.charms.length)own.innerHTML=`<span class="k" style="font-weight:400">${t('shop.noneYet')}</span>`;
@@ -140,7 +165,7 @@ function renderShop(){
   if(ar)ar.onclick=async()=>{sfx.click();ar.disabled=true;if(await showRewarded()){S.adReroll=true;S.offers=rollOffers();snapshot('shop');renderShop();}else ar.disabled=false;};
   $('#shopDeck').onclick=()=>{sfx.click();openDeckView(renderShop);};
   snapshot('shop');
-  $('#nextStage').onclick=()=>{sfx.click();hideTip();closePanel();startStage();};
+  $('#nextStage').onclick=()=>{sfx.click();hideTip();closeOfferSheet();closePanel();startStage();};
   if(tutOn()&&!S.tutSeen.shop)setTimeout(()=>tutStep('shop',[
     {target:'#offers',title:t('tut.shopCharmT'),html:t('tut.shopCharm')},
     {target:'#cardOffers',title:t('tut.shopCardT'),html:t('tut.shopCard')},

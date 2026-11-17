@@ -7,7 +7,7 @@ function resize(){const d=devicePixelRatio||1;cv.width=innerWidth*d;cv.height=in
 addEventListener('resize',resize);resize();
 function burst(x,y,n=24,colors=['#e8c46a','#fff3c4','#c9a35a'],power=6){
   for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=(.4+Math.random())*power;
-    parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-power*.5,life:1,decay:.012+Math.random()*.02,size:2+Math.random()*4,c:rnd(colors),rot:Math.random()*6,vr:(Math.random()-.5)*.4,sq:Math.random()<.5});}
+    parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-power*.5,life:1,decay:.012+Math.random()*.02,size:2+Math.random()*4,c:colors[Math.random()*colors.length|0],rot:Math.random()*6,vr:(Math.random()-.5)*.4,sq:Math.random()<.5});}
 }
 function loop(){
   cx.clearRect(0,0,innerWidth,innerHeight);

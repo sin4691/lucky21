@@ -28,7 +28,7 @@ function openMultiPicker(title,hint,max,okLabel,onConfirm){
       hideTip();
       if(picked.has(c.id)){picked.delete(c.id);el.classList.remove('picked');}
       else{if(picked.size>=max){toast(t('ui.pickMax',{max}));return;}picked.set(c.id,c);el.classList.add('picked');}
-      sfx.click();$('#pickCount').textContent=t('ui.selected',{n:picked.size,max});$('#pickOk').disabled=!picked.size;
+      grid.classList.toggle('has-pick',picked.size>0);sfx.click();$('#pickCount').textContent=t('ui.selected',{n:picked.size,max});$('#pickOk').disabled=!picked.size;
     };
   });
   $('#pickOk').onclick=()=>{hideTip();onConfirm([...picked.values()]);};

@@ -406,4 +406,9 @@ L['en']={
   "cloud.signInFailed":"Couldn’t sign in",
   "ui.privacy":"Privacy",
   "ui.open":"Policy",
+  "title.daily":"Daily Challenge",
+  "title.dailySub":"Today's seed",
+  "title.dailyBest":"Today: stage {n}",
+  "title.dailyClear":"Cleared today!",
+  "daily.overwrite":"Your saved run will be replaced. Start today's Daily Challenge? Everyone gets the same deck order and shop.",
 };

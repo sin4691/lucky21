@@ -406,4 +406,9 @@ L['ja']={
   "cloud.signInFailed":"ログインできませんでした",
   "ui.privacy":"プライバシー",
   "ui.open":"ポリシー",
+  "title.daily":"デイリー挑戦",
+  "title.dailySub":"今日のシード",
+  "title.dailyBest":"今日の最高 ステージ{n}",
+  "title.dailyClear":"今日クリア！",
+  "daily.overwrite":"中断中のランは消えます。今日のデイリー挑戦を始めますか？全員が同じデッキ順とショップで始まります。",
 };

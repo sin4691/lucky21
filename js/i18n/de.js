@@ -406,4 +406,9 @@ L['de']={
   "cloud.signInFailed":"Anmeldung fehlgeschlagen",
   "ui.privacy":"Datenschutz",
   "ui.open":"Erklärung",
+  "title.daily":"Tagesrunde",
+  "title.dailySub":"Heutiger Seed",
+  "title.dailyBest":"Heute: Stufe {n}",
+  "title.dailyClear":"Heute geschafft!",
+  "daily.overwrite":"Dein gespeicherter Lauf wird ersetzt. Heutige Tagesrunde starten? Alle bekommen dieselbe Kartenreihenfolge und denselben Shop.",
 };

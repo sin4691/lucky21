@@ -406,4 +406,9 @@ L['pt-BR']={
   "cloud.signInFailed":"Não foi possível entrar",
   "ui.privacy":"Privacidade",
   "ui.open":"Política",
+  "title.daily":"Desafio diário",
+  "title.dailySub":"Semente de hoje",
+  "title.dailyBest":"Hoje: fase {n}",
+  "title.dailyClear":"Concluído hoje!",
+  "daily.overwrite":"Sua partida salva será substituída. Começar o desafio diário de hoje? Todos recebem a mesma ordem de baralho e loja.",
 };
