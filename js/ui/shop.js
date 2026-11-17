@@ -79,7 +79,7 @@ function renderShop(){
     div.insertAdjacentHTML('beforeend',`<div class="rar r${d.rar}">${RAR_NAME[d.rar]}</div><div class="on">${d.name}</div><div class="od">${d.desc.replace('{v}',0)}</div>`);
     const b=document.createElement('button');b.className='btn small';b.textContent=o.sold?t('shop.sold'):t('shop.buy',{p:d.price});
     b.disabled=o.sold||S.gold<d.price||S.charms.length>=5;
-    b.onclick=()=>{S.gold-=d.price;S.charms.push(makeCharm(d));discover('charms',d.id);o.sold=true;sfx.buy();const c=center(b);burst(c.x,c.y,30);renderCharms();renderSide();renderShop();};
+    b.onclick=()=>{if(o.sold||S.gold<d.price||S.charms.length>=5)return;S.gold-=d.price;S.charms.push(makeCharm(d));discover('charms',d.id);o.sold=true;sfx.buy();const c=center(b);burst(c.x,c.y,30);renderCharms();renderSide();renderShop();};
     div.appendChild(b);box.appendChild(div);
   });
   const cbox=$('#cardOffers');
@@ -101,12 +101,14 @@ function renderShop(){
     const b=document.createElement('button');b.className='btn small';b.textContent=o.sold?t('shop.done'):label;
     b.disabled=o.sold||S.gold<o.price||(o.kind==='remove'&&S.myDeck.length<=20);
     b.onclick=()=>{
+      if(o.sold||S.gold<o.price)return; // 빠른 두 번 탭 등으로 중복 결제되지 않게
       if(o.kind==='card'){S.gold-=o.price;S.myDeck.push(o.card);o.sold=true;sfx.buy();toast(t('shop.added',{card:o.card.s+o.card.r}));renderSide();renderShop();}
       else if(o.kind==='enh'){
-        openPicker(t('shop.pickEnh',{name:ENH[o.enh].name}),t('shop.pickEnhNote'),c=>{S.gold-=o.price;c.enh=o.enh;o.sold=true;sfx.buy();toast(t('shop.enhanced',{card:c.s+c.r,name:ENH[o.enh].name}));renderSide();renderShop();});
+        openPicker(t('shop.pickEnh',{name:ENH[o.enh].name}),t('shop.pickEnhNote'),c=>{if(o.sold||S.gold<o.price){renderShop();return;}S.gold-=o.price;c.enh=o.enh;o.sold=true;sfx.buy();toast(t('shop.enhanced',{card:c.s+c.r,name:ENH[o.enh].name}));renderSide();renderShop();});
       }else{
         const max=Math.min(3,S.myDeck.length-20);
         openMultiPicker(t('shop.pickRemove'),t('shop.pickRemoveNote',{max}),max,t('shop.removeOk'),cs=>{
+          if(o.sold||S.gold<o.price){renderShop();return;}
           const ids=new Set(cs.map(c=>c.id));S.gold-=o.price;S.myDeck=S.myDeck.filter(x=>!ids.has(x.id));o.sold=true;sfx.buy();
           toast(t('shop.removed',{cards:cs.map(c=>c.s+c.r).join(', ')}));renderSide();renderShop();});
       }
@@ -120,7 +122,7 @@ function renderShop(){
     div.insertAdjacentHTML('beforeend',`<div class="on">${t.name}</div><div class="od">${t.desc}</div>`);
     const b=document.createElement('button');b.className='btn small';b.textContent=o.sold?window.t('shop.done'):window.t('shop.buy',{p:t.price});
     b.disabled=o.sold||S.gold<t.price||S.tricks.length>=2;
-    b.onclick=()=>{S.gold-=t.price;S.tricks.push(t);discover('tricks',t.id);o.sold=true;sfx.buy();renderCharms();renderSide();renderShop();};
+    b.onclick=()=>{if(o.sold||S.gold<t.price||S.tricks.length>=2)return;S.gold-=t.price;S.tricks.push(t);discover('tricks',t.id);o.sold=true;sfx.buy();renderCharms();renderSide();renderShop();};
     div.appendChild(b);tbox.appendChild(div);
   });
   const own=$('#owned');
@@ -132,7 +134,7 @@ function renderShop(){
     it.appendChild(b);own.appendChild(it);
   });
   const rr=$('#reroll');rr.disabled=S.gold<S.rerollCost;
-  rr.onclick=()=>{S.gold-=S.rerollCost;S.rerollCost++;S.offers=rollOffers();sfx.click();renderSide();renderShop();};
+  rr.onclick=()=>{if(S.gold<S.rerollCost)return;S.gold-=S.rerollCost;S.rerollCost++;S.offers=rollOffers();sfx.click();renderSide();renderShop();};
   // 광고 보고 무료 새로고침 (상점마다 1번, 앱에서만)
   const ar=$('#adReroll');
   if(ar)ar.onclick=async()=>{sfx.click();ar.disabled=true;if(await showRewarded()){S.adReroll=true;S.offers=rollOffers();snapshot('shop');renderShop();}else ar.disabled=false;};

@@ -42,6 +42,10 @@ try {
       muted = true; SPEED = 0.02;
       closePanel(); newRun();
       if (rich) S.gold = 300;
+      // 골드가 음수가 되는 순간의 호출 경로를 남긴다
+      let g = S.gold; window.__goldTrace = '';
+      Object.defineProperty(S, 'gold', { configurable: true, enumerable: true, get: () => g,
+        set: v => { if (v < 0 && !window.__goldTrace) window.__goldTrace = `${g} → ${v}\n` + (new Error().stack || '').split('\n').slice(2, 7).join('\n'); g = v; } });
     }, { seed: SEED * 1000 + run, rich: RICH });
     await page.evaluate(() => startStage());
 
@@ -69,6 +73,7 @@ try {
         };
       });
       for (const b of st.bad) problems.push(`${tag} 숫자 이상 (스테이지 ${st.stage}): ${b}`);
+      if (st.bad.length) { const tr = await page.evaluate(() => window.__goldTrace); if (tr) problems.push(`${tag} 골드 추적:\n${tr}`); }
       if (st.bad.length) { end = 'bad'; break; }
 
       const key = JSON.stringify([st.stage, st.hands, st.score, st.overlay, st.btn, st.busy]);
@@ -88,7 +93,8 @@ try {
       if (st.btn.includes('pickCancel')) {       // 카드 고르기 창 (강화·제거): 무작위로 1~2장 고르고 확인
         await page.evaluate(() => {
           const cards = [...document.querySelectorAll('#gridHost .card')].filter(c => !c.classList.contains('used'));
-          const n = 1 + Math.floor(__r() * 2);
+          // 여러 장 고르는 창(제거)만 1~2장, 한 장 고르는 창(강화)은 누르는 순간 확정되므로 1장
+          const n = document.getElementById('pickOk') ? 1 + Math.floor(__r() * 2) : 1;
           for (let i = 0; i < n && cards.length; i++) cards.splice(Math.floor(__r() * cards.length), 1)[0].click();
         });
         await page.waitForTimeout(40);
