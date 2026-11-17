@@ -6,7 +6,8 @@
 
 블랙잭에 덱빌딩 로그라이크를 결합한 게임입니다. 딜러를 이기면 **칩 × 배수**만큼 점수를 얻고, 12개 스테이지의 목표 점수를 넘기면 승리합니다. 상점에서 부적·카드·강화를 사서 **점수 공식과 내 덱을 직접 설계**합니다.
 
-<p align="center"><img src="docs/demo.gif" width="680" alt="데모 모드 플레이: 하트 블랙잭으로 46 × 102 = 4,692점"></p>
+<p align="center"><img src="docs/demo.gif" width="680" alt="데모 모드 플레이: 하트 7·4·K로 21을 만들어 21 × 216 = 4,536점, 1스테이지 클리어"></p>
+<p align="center"><sub>고화질 영상: <a href="docs/media/gameplay.mp4">docs/media/gameplay.mp4</a></sub></p>
 
 | 플레이 | 상점 | 모바일 |
 |---|---|---|
