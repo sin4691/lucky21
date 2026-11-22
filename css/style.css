@@ -591,3 +591,11 @@ input,textarea{-webkit-user-select:text;user-select:text}
 @keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .demo-badge.daily-badge{background:#1f5a52;color:#d6fff8}
+/* 터치 화면: 키보드 안내는 숨기고, 터치 안내만 보인다 */
+.touch-only{display:none}
+@media (hover:none){.kbd-only{display:none!important}.touch-only{display:inline}}
+/* 부적 꾹 눌러 옮기기 */
+#charmBar .charm{-webkit-touch-callout:none;touch-action:none}
+#charmBar .charm.holding{transition:transform .25s ease;transform:scale(.94)}
+#charmBar .charm.lifted{z-index:20;transition:none;box-shadow:0 0 0 2px var(--gold),0 12px 22px rgba(0,0,0,.55);cursor:grabbing}
+#charmBar .charm.shift{transition:transform .15s ease}

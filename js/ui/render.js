@@ -40,11 +40,68 @@ function renderBust(){
   const p=bustChance();el.textContent=t('ui.bustChance',{p:Math.round(p*100)});
   el.className='on'+(p>=.5?' hi':p>=.25?' mid':'');
 }
+const TOUCH_UI=()=>matchMedia('(hover:none)').matches;
+const canReorder=()=>!(S.busy&&!$('#overlay').classList.contains('on')&&S.player.length);
+// 터치: 꾹 누르면(0.35초) 부적이 들리고, 좌우로 끌어 놓으면 순서가 바뀐다
+function holdToReorder(el){
+  el.addEventListener('pointerdown',e=>{
+    if(e.pointerType==='mouse')return;
+    const bar=$('#charmBar'),x0=e.clientX,y0=e.clientY;let lifted=false,tx=0;
+    el.classList.add('holding');
+    const timer=setTimeout(()=>{
+      el.classList.remove('holding');
+      if(!canReorder()){toast(t('ui.noReorder'));cleanup();return;}
+      lifted=true;hideTip();el.classList.add('lifted');el.style.transform='scale(1.1)';
+      try{el.setPointerCapture(e.pointerId);}catch(_){}
+      if(navigator.vibrate)navigator.vibrate(15);sfx.click();
+    },350);
+    const others=()=>[...bar.querySelectorAll('.charm')].filter(c=>c!==el);
+    const move=ev=>{
+      if(ev.pointerId!==e.pointerId)return;
+      if(!lifted){if(Math.hypot(ev.clientX-x0,ev.clientY-y0)>10){clearTimeout(timer);cleanup();}return;}
+      ev.preventDefault();
+      const x=ev.clientX,list=others();
+      // 손가락이 지나간 이웃 부적 앞뒤로 자리를 옮긴다
+      const idx=list.filter(c=>{const r=c.getBoundingClientRect();return r.left+r.width/2<x;}).length;
+      const before=list[idx]||null,curNext=el.nextElementSibling;
+      if(before!==curNext&&!(before===null&&!(curNext&&curNext.classList.contains('charm')))){
+        const firstRects=new Map(list.map(c=>[c,c.getBoundingClientRect().left]));
+        const elLeft=el.getBoundingClientRect().left-tx;
+        bar.insertBefore(el,before||list[list.length-1].nextSibling);
+        const newLeft=el.getBoundingClientRect().left-tx;
+        x0Shift+=newLeft-elLeft;
+        // 밀려난 부적은 부드럽게 미끄러지게
+        list.forEach(c=>{const d=firstRects.get(c)-c.getBoundingClientRect().left;if(d){c.classList.remove('shift');c.style.transform=`translateX(${d}px)`;requestAnimationFrame(()=>{c.classList.add('shift');c.style.transform='';});}});
+      }
+      tx=x-x0-x0Shift;el.style.transform=`translateX(${tx}px) scale(1.1)`;
+    };
+    let x0Shift=0;
+    const up=ev=>{
+      if(ev.pointerId!==e.pointerId)return;
+      clearTimeout(timer);
+      if(lifted){
+        const order=[...bar.querySelectorAll('.charm')].map(c=>+c.dataset.i);
+        const changed=order.some((v,k)=>v!==k);
+        if(changed){const old=S.charms.slice();S.charms=order.map(k=>old[k]);sfx.click();}
+        hideTip();cleanup();renderCharms();
+        // 꾹 누른 뒤 따라오는 탭(설명 창)은 막는다
+        setTimeout(hideTip,50);
+        return;
+      }
+      cleanup();
+    };
+    function cleanup(){
+      el.classList.remove('holding','lifted');el.style.transform='';
+      removeEventListener('pointermove',move);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);
+    }
+    addEventListener('pointermove',move,{passive:false});addEventListener('pointerup',up);addEventListener('pointercancel',up);
+  });
+}
 function renderCharms(){
   const bar=$('#charmBar');bar.innerHTML='';
   S.charms.forEach((ch,i)=>{
-    const el=charmEl(ch);el.draggable=true;
-    el.addEventListener('dragstart',e=>{if(S.busy&&!$('#overlay').classList.contains('on')&&S.player.length){e.preventDefault();toast(t('ui.noReorder'));return;}e.dataTransfer.setData('text/plain',String(i));el.classList.add('dragging');hideTip();});
+    const el=charmEl(ch);el.draggable=!TOUCH_UI();el.dataset.i=i;holdToReorder(el);
+    el.addEventListener('dragstart',e=>{if(!canReorder()){e.preventDefault();toast(t('ui.noReorder'));return;}e.dataTransfer.setData('text/plain',String(i));el.classList.add('dragging');hideTip();});
     el.addEventListener('dragend',()=>el.classList.remove('dragging'));
     el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('over');});
     el.addEventListener('dragleave',()=>el.classList.remove('over'));
