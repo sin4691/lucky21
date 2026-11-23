@@ -72,16 +72,16 @@ npm run sync
 
 ## 광고 (AdMob) 설정
 
-지금은 **구글 테스트 광고 ID**가 들어 있어서 폰에서 "Test Ad"가 나옵니다. 출시 전에 실제 ID로 바꿉니다.
+실제 AdMob ID가 들어 있습니다 (앱 `ca-app-pub-2715211431526967~9783030711`, 보상형 단위 `.../5805538514`).
+**빌드 종류에 따라 자동으로 나뉩니다**: Android Studio에서 바로 실행한 디버그 빌드는 구글 테스트 광고("Test Ad"), 서명된 출시 빌드(번들)만 실제 광고를 받습니다. 판단은 `BuildInfoPlugin.java` → `js/platform/ads.js`.
 
-1. https://admob.google.com 가입 → **앱 > 앱 추가** → Android, "Google Play에 등록됨"은 아직이면 "아니요"
-2. 앱 ID(`ca-app-pub-숫자~숫자`)를 `android/app/src/main/res/values/strings.xml`의 `admob_app_id`에 넣기
-3. **광고 단위 > 보상형** 하나 만들기 → 단위 ID(`ca-app-pub-숫자/숫자`)를 `js/platform/ads.js`의 `ADS_CONFIG.rewardedId`에 넣고 `testing:false`로
-4. AdMob **개인정보 보호 및 메시지 > 유럽 규정** 메시지를 만들어 게시 (안 하면 유럽 사용자에게 광고가 안 나옴)
-5. 플레이 스토어에 출시한 뒤 AdMob에서 앱을 스토어와 연결하고, `app-ads.txt`가 필요하면 안내대로 등록
-6. `npm run sync`
+1. AdMob **개인정보 보호 및 메시지 > 유럽 규정** 메시지를 만들어 게시 (안 하면 유럽 사용자에게 광고가 안 나옴)
+2. 자기 폰은 AdMob **설정 > 테스트 기기**에 등록 (출시 빌드를 깔아도 테스트 광고만 나옴)
+3. `app-ads.txt`: 스토어 등록정보의 웹사이트 도메인 최상위(`https://sin4691.github.io/app-ads.txt`)에 아래 한 줄
+   `google.com, pub-2715211431526967, DIRECT, f08c47fec0942fa0`
+4. 프로덕션 출시 후 AdMob에서 앱을 Play 스토어와 연결 → 앱 검토 통과 전에는 광고가 적게 나올 수 있음
 
-> 실제 광고 ID로 바꾼 뒤에는 **자기 광고를 직접 누르지 마세요.** 계정이 정지될 수 있습니다. 개발 중에는 `testing:true`로 두면 됩니다.
+> **자기 실제 광고를 직접 보거나 누르지 마세요.** 계정이 정지될 수 있습니다.
 
 ## 클라우드 저장 (Play 게임즈) 설정
 

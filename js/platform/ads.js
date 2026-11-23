@@ -1,11 +1,13 @@
 // 보상형 광고 (앱 전용, @capacitor-community/admob).
 // 광고는 플레이어가 고를 때만 나온다: ① 탈락 직전 "광고 보고 1번 더"(한 판에 1번) ② 상점 무료 새로고침(상점마다 1번).
-// 지금은 구글이 제공하는 테스트 광고 ID다. 출시 전에 AdMob에서 만든 ID로 바꾼다 (app/README.md 참고).
+// 서명된 출시 빌드만 실제 광고를 받는다. 디버그 빌드(Android Studio 실행)는 구글 테스트 광고만 나온다.
+// 개발자가 자기 실제 광고를 보거나 누르면 AdMob 정책 위반이라 이렇게 나눴다.
 'use strict';
 
 const ADS_CONFIG={
-  rewardedId:'ca-app-pub-3940256099942544/5224354917', // ← AdMob 보상형 광고 단위 ID로 교체
-  testing:true,                                         // ← 출시 빌드에서는 false
+  rewardedId:'ca-app-pub-2715211431526967/5805538514', // LUCKY 21 보상형 (부활·상점 새로고침 공용)
+  testId:'ca-app-pub-3940256099942544/5224354917',     // 구글 공식 테스트 보상형 ID
+  testing:true,                                         // 시작 시 빌드 종류를 보고 정한다 (모르면 테스트로)
 };
 const AdMob=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.AdMob;
 let adsReady=false,adsPrivacyRequired=false;
@@ -14,6 +16,8 @@ let adsReady=false,adsPrivacyRequired=false;
 async function initAds(){
   if(!IS_APP||!AdMob)return;
   try{
+    const BI=window.Capacitor.Plugins.BuildInfo;
+    if(BI){try{ADS_CONFIG.testing=!!(await BI.get()).debug;}catch(e){}}
     await AdMob.initialize({initializeForTesting:ADS_CONFIG.testing});
     try{
       const info=await AdMob.requestConsentInfo();
@@ -30,7 +34,7 @@ const canShowAds=()=>IS_APP&&adsReady&&!S.demo;
 async function showRewarded(){
   if(!canShowAds())return false;
   try{
-    await AdMob.prepareRewardVideoAd({adId:ADS_CONFIG.rewardedId,isTesting:ADS_CONFIG.testing});
+    await AdMob.prepareRewardVideoAd({adId:ADS_CONFIG.testing?ADS_CONFIG.testId:ADS_CONFIG.rewardedId,isTesting:ADS_CONFIG.testing});
     const reward=await AdMob.showRewardVideoAd();
     return !!reward;
   }catch(e){toast(t('ads.failed'));return false;}
