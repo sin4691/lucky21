@@ -22,6 +22,8 @@ function fitPanel(){
   const maxW=parseFloat(getComputedStyle(p).maxWidth)||availW;
   let h=p.scrollHeight;
   if(h<=availH){p.style.maxHeight='';return;}
+  // 글 읽는 창(규칙·도감)은 폰에서 줄이지 않고 스크롤한다. 줄이면 글씨가 9~10px까지 작아진다
+  if(innerWidth<820&&p.matches('.rulesp,.collection')){p.style.maxHeight='';return;}
   // 폴드 커버처럼 아주 좁은 폰은 글자가 읽히도록 덜 줄인다
   const MIN=innerWidth>=820&&innerHeight>=520?.62:innerWidth<340?.62:.5;
   let k=Math.max(MIN,availH/h);
@@ -41,7 +43,7 @@ function rulesHtml(){
     ${[['win',2],['bj',4],['push',1]].map(([k,m])=>`<div>${t('rules.'+k)}<b><span class="c">${t('rules.chips')}</span> × <span class="m">${m}</span></b></div>`).join('')}
     <div>${t('rules.dd')}<b><span class="m">${t('rules.final2')}</span></b></div>
   </div>
-  <p style="font-size:12.5px;color:var(--muted)">${t('rules.cardChips')}</p>`;
+  <p class="rules-note">${t('rules.cardChips')}</p>`;
 }
 // 언어 선택. 고르면 저장하고 새로고침해서 모든 글을 다시 그린다 (진행 중인 판은 마지막 저장 지점에서 이어짐).
 function openLangPicker(back){
@@ -161,6 +163,6 @@ function victory(){
 }
 function openRules(){
   sfx.click();
-  openPanel(`<h2>${t('ui.rules')}</h2>${rulesHtml()}<div class="actions"><button class="btn teal small" id="tutAgain">${t('ui.tutAgain')}</button><button class="btn" id="cl">${t('ui.close')}</button></div>`);$('#cl').onclick=closePanel;
+  openPanel(`<h2>${t('ui.rules')}</h2>${rulesHtml()}<div class="actions"><button class="btn teal small" id="tutAgain">${t('ui.tutAgain')}</button><button class="btn" id="cl">${t('ui.close')}</button></div>`,'rulesp');$('#cl').onclick=closePanel;
   $('#tutAgain').onclick=()=>{setTutDone(false);S.tut=!S.demo;S.tutSeen={};closePanel();toast(S.demo?t('ui.tutDemoToast'):t('ui.tutAgainToast'));};
 }
