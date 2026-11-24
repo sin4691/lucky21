@@ -411,4 +411,5 @@ L['zh-Hant']={
   "title.dailyBest":"今日最佳 第 {n} 關",
   "title.dailyClear":"今日已通關！",
   "daily.overwrite":"進行中的對局會被清除。要開始今日的每日挑戰嗎？所有人都會拿到相同的牌序與商店。",
+  "home.settings":"設定",
 };

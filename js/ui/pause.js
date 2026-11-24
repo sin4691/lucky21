@@ -21,8 +21,8 @@ function renderPause(){
   const run=inRun(),overlayOn=$('#overlay').classList.contains('on');
   const info=run?`<p class="pz-info">${S.stage>FINAL_STAGE?`∞ · STAGE ${S.stage}`:`STAGE ${S.stage} / ${FINAL_STAGE}`} · ${fmt(S.score)} / ${fmt(S.target)}</p>`:'';
   const vol=Math.round(SETTINGS.vol*100);
-  $('#pauseBox').innerHTML=`<div class="sub">PAUSED</div><h2>${t('pause.title')}</h2>${info}
-    <button class="btn pz-resume" id="pzResume">▶ ${t('ui.continue')}</button>
+  $('#pauseBox').innerHTML=`<div class="sub">${run?'PAUSED':'SETTINGS'}</div><h2>${run?t('pause.title'):t('home.settings')}</h2>${info}
+    <button class="btn pz-resume" id="pzResume">${run?'▶ '+t('ui.continue'):t('ui.close')}</button>
     <div class="pz-row"><span>${t('pause.speed')}</span><div class="pz-seg">
       <button data-speed="1" class="${SETTINGS.speed===1?'on':''}">1x</button><button data-speed="2" class="${SETTINGS.speed===2?'on':''}">2x</button></div></div>
     <div class="pz-row"><span>${t('pause.sound')}</span><input type="range" id="pzVol" min="0" max="100" step="5" value="${vol}"><b id="pzVolV">${vol}%</b></div>

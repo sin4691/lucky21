@@ -51,23 +51,47 @@ function openLangPicker(back){
   document.querySelectorAll('.lang-opt').forEach(b=>b.onclick=()=>{sfx.click();if(b.dataset.lang===LANG){back?back():closePanel();return;}setLang(b.dataset.lang);});
   $('#langClose').onclick=()=>{sfx.click();back?back():closePanel();};
 }
+// 메인화면: 게임판과 분리된 전용 화면. 패널(덱 선택·도감·규칙)과 설정 창은 이 위에 뜬다.
+function hideHome(){const h=$('#home');if(h){h.classList.remove('on');h.setAttribute('aria-hidden','true');}}
+const homeOn=()=>$('#home').classList.contains('on');
+function homeCards(){
+  // 코드로 그린 카드 몇 장이 로고 뒤에서 천천히 떠다닌다
+  const deco=[{r:'A',s:'♠'},{r:'K',s:'♥'},{r:'7',s:'♦'},{r:'J',s:'♣'},{r:'',s:''}];
+  const box=document.createElement('div');box.className='home-cards';
+  deco.forEach((c,i)=>{const el=c.r?cardEl(c):backOnly();el.classList.add('hc','hc'+i);el.style.pointerEvents='none';box.appendChild(el);});
+  return box;
+}
 function title(){
   const sv=loadSave();
-  unseedRng();newRun();S.over=true;renderSide();renderCharms();$('.logo').innerHTML='LUCKY 21<small>BLACKJACK ROGUELIKE</small>';
-  openPanel(`<button class="linkbtn lang-btn" id="titleLang">🌐 ${LANGS.find(l=>l[0]===LANG)[1]}</button><h1 class="brand">LUCKY 21</h1><div class="sub">BLACKJACK ROGUELIKE${isTrial()?` · <span class="trial-badge">${t('trial.badge',{n:TRIAL_LAST_STAGE})}</span>`:''}</div>
-    <ul class="pitch">
-      <li>${t('title.p1')}</li>
-      <li>${t('title.p2')}</li>
-      <li>${t('title.p3')}</li>
-    </ul>
-    <p class="pitch-note">${t('title.note')}</p>
-    <div class="actions" style="justify-content:space-between">${recHtml()||'<span></span>'}
-      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end"><button class="btn teal" id="demo">${t('title.demo')}<small>${t('title.demoSub')}</small></button><button class="btn" id="daily">${t('title.daily')}<small>${dailySubText()}</small></button>${sv?`<button class="btn" id="cont">${t('title.cont')}<small>STAGE ${sv.stage}${sv.phase==='shop'||sv.phase==='clear'?t('title.shop'):''}</small></button>`:''}<button class="btn" id="go">${sv?t('title.newGame'):t('title.start')}<small>NEW RUN</small></button></div></div>`,'title');
+  unseedRng();newRun();S.over=true;closePanel();renderSide();renderCharms();$('.logo').innerHTML='LUCKY 21<small>BLACKJACK ROGUELIKE</small>';
+  const h=$('#home');
+  h.innerHTML=`<div class="home-top"><button class="linkbtn lang-btn" id="titleLang">🌐 ${LANGS.find(l=>l[0]===LANG)[1]}</button></div>
+    <div class="home-hero"><h1 class="brand">LUCKY 21</h1><div class="sub">BLACKJACK ROGUELIKE${isTrial()?` · <span class="trial-badge">${t('trial.badge',{n:TRIAL_LAST_STAGE})}</span>`:''}</div></div>
+    <div class="home-menu">
+      ${sv?`<button class="btn" id="cont">${t('title.cont')}<small>STAGE ${sv.stage}${sv.phase==='shop'||sv.phase==='clear'?t('title.shop'):''}</small></button>`:''}
+      <button class="btn${sv?' ghost':''}" id="go">${sv?t('title.newGame'):t('title.start')}<small>NEW RUN</small></button>
+      <button class="btn ghost" id="daily">${t('title.daily')}<small>${dailySubText()}</small></button>
+      <button class="btn teal" id="demo">${t('title.demo')}<small>${t('title.demoSub')}</small></button>
+    </div>
+    <div class="home-foot">
+      <div class="home-icons">
+        <button class="hi" id="hCol"><span>📖</span>${t('ui.collection')}</button>
+        <button class="hi" id="hStats"><span>🏆</span>${t('col.tabStats')}</button>
+        <button class="hi" id="hRules"><span>❔</span>${t('ui.rules')}</button>
+        <button class="hi" id="hSet"><span>⚙</span>${t('home.settings')}</button>
+      </div>${recHtml()}
+    </div>`;
+  $('.home-hero').insertBefore(homeCards(),$('.home-hero').firstChild);
+  h.classList.add('on');h.setAttribute('aria-hidden','false');
   if(sv)$('#cont').onclick=()=>{ac();sfx.click();resumeRun();};
   $('#titleLang').onclick=()=>{sfx.click();openLangPicker(title);};
   $('#go').onclick=()=>{ac();sfx.click();openDeckSelect(sv);};
   $('#demo').onclick=()=>{ac();sfx.click();setupDemo();startStage();};
   $('#daily').onclick=()=>{ac();sfx.click();startDaily();};
+  $('#hCol').onclick=()=>{sfx.click();openCollection(null,'ach');};
+  $('#hStats').onclick=()=>{sfx.click();openCollection(null,'stats');};
+  $('#hRules').onclick=()=>openRules();
+  $('#hSet').onclick=()=>openPause();
 }
 function setupDemo(){
   S.demo=true;S.gold=15;

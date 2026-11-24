@@ -411,4 +411,5 @@ L['ko']={
   "title.dailyBest":"오늘 최고 {n}스테이지",
   "title.dailyClear":"오늘 클리어!",
   "daily.overwrite":"진행 중인 판이 지워져요. 오늘의 일일 도전을 시작할까요? 모두가 같은 덱 순서와 상점으로 시작해요.",
+  "home.settings":"설정",
 };

@@ -411,4 +411,5 @@ L['pt-BR']={
   "title.dailyBest":"Hoje: fase {n}",
   "title.dailyClear":"Concluído hoje!",
   "daily.overwrite":"Sua partida salva será substituída. Começar o desafio diário de hoje? Todos recebem a mesma ordem de baralho e loja.",
+  "home.settings":"Ajustes",
 };

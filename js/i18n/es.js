@@ -411,4 +411,5 @@ L['es']={
   "title.dailyBest":"Hoy: fase {n}",
   "title.dailyClear":"¡Superado hoy!",
   "daily.overwrite":"Se reemplazará tu partida guardada. ¿Empezar el reto diario de hoy? Todos reciben el mismo orden de mazo y tienda.",
+  "home.settings":"Ajustes",
 };

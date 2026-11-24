@@ -4,6 +4,7 @@
 /* ---------------- state ---------------- */
 let S=null;
 function newRun(){
+  hideHome();
   S={deckId:'classic',handMod:0,bjCount:0,tut:!tutDone(),tutSeen:{},coaching:false,tricks:[],endless:false,stage:1,gold:6,charms:[],streak:0,bestHand:0,usedBoss:[],busy:true,
      player:[],dealer:[],pEls:[],dEls:[],myDeck:newDeck(),draw:[],discard:[],shoe:[],score:0,target:0,handsLeft:0,boss:null,nextBoss:null};
   S.nextBoss=pickBoss(1);

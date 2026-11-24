@@ -411,4 +411,5 @@ L['en']={
   "title.dailyBest":"Today: stage {n}",
   "title.dailyClear":"Cleared today!",
   "daily.overwrite":"Your saved run will be replaced. Start today's Daily Challenge? Everyone gets the same deck order and shop.",
+  "home.settings":"Settings",
 };
