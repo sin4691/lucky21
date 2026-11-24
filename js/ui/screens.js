@@ -56,11 +56,19 @@ function hideHome(){const h=$('#home');if(h){h.classList.remove('on');h.setAttri
 const homeOn=()=>$('#home').classList.contains('on');
 function homeCards(){
   // 코드로 그린 카드 몇 장이 로고 뒤에서 천천히 떠다닌다
-  const deco=[{r:'A',s:'♠'},{r:'K',s:'♥'},{r:'7',s:'♦'},{r:'J',s:'♣'},{r:'',s:''}];
+  const deco=[{r:'A',s:'♠'},{r:'K',s:'♥'},{r:'',s:''}];
   const box=document.createElement('div');box.className='home-cards';
   deco.forEach((c,i)=>{const el=c.r?cardEl(c):backOnly();el.classList.add('hc','hc'+i);el.style.pointerEvents='none';box.appendChild(el);});
   return box;
 }
+// 긴 단어(독일어 등)가 카드 밖으로 넘치면 그 카드의 글자만 조금씩 줄인다
+function fitHomeCards(){
+  document.querySelectorAll('#home .mcard b').forEach(b=>{
+    b.style.fontSize='';let f=parseFloat(getComputedStyle(b).fontSize),w=b.parentElement.clientWidth-14;
+    while(f>10&&[...b.childNodes].some(()=>b.scrollWidth>w)){f-=1;b.style.fontSize=f+'px';}
+  });
+}
+addEventListener('resize',()=>{if($('#home')&&homeOn())fitHomeCards();});
 function title(){
   const sv=loadSave();
   unseedRng();newRun();S.over=true;closePanel();renderSide();renderCharms();$('.logo').innerHTML='LUCKY 21<small>BLACKJACK ROGUELIKE</small>';
@@ -68,10 +76,10 @@ function title(){
   h.innerHTML=`<div class="home-top"><button class="linkbtn lang-btn" id="titleLang">🌐 ${LANGS.find(l=>l[0]===LANG)[1]}</button></div>
     <div class="home-hero"><h1 class="brand">LUCKY 21</h1><div class="sub">BLACKJACK ROGUELIKE${isTrial()?` · <span class="trial-badge">${t('trial.badge',{n:TRIAL_LAST_STAGE})}</span>`:''}</div></div>
     <div class="home-menu">
-      ${sv?`<button class="btn" id="cont">${t('title.cont')}<small>STAGE ${sv.stage}${sv.phase==='shop'||sv.phase==='clear'?t('title.shop'):''}</small></button>`:''}
-      <button class="btn${sv?' ghost':''}" id="go">${sv?t('title.newGame'):t('title.start')}<small>NEW RUN</small></button>
-      <button class="btn ghost" id="daily">${t('title.daily')}<small>${dailySubText()}</small></button>
-      <button class="btn teal" id="demo">${t('title.demo')}<small>${t('title.demoSub')}</small></button>
+      ${sv?`<button class="mcard" id="cont"><b>${t('title.cont')}</b><small>STAGE ${sv.stage}${sv.phase==='shop'||sv.phase==='clear'?t('title.shop'):''}</small></button>`:''}
+      <button class="mcard" id="go"><b>${sv?t('title.newGame'):t('title.start')}</b><small>NEW RUN</small></button>
+      <button class="mcard" id="daily"><b>${t('title.daily')}</b><small>${dailySubText()}</small></button>
+      <button class="mcard demo" id="demo"><b>${t('title.demo')}</b><small>${t('title.demoSub')}</small></button>
     </div>
     <div class="home-foot">
       <div class="home-icons">
@@ -82,7 +90,13 @@ function title(){
       </div>${recHtml()}
     </div>`;
   $('.home-hero').insertBefore(homeCards(),$('.home-hero').firstChild);
+  // 메뉴는 손에 쥔 카드 패: 가운데를 기준으로 부채꼴로 펼친다
+  const cards=[...h.querySelectorAll('.mcard')],n=cards.length,suits=['♠','♥','♦','♣'];
+  cards.forEach((c,i)=>{const o=i-(n-1)/2;c.dataset.s=suits[i];if(i===1||i===2)c.classList.add('red');
+    c.style.setProperty('--rot',(o*6)+'deg');c.style.setProperty('--drop',(o*o*4)+'px');c.style.zIndex=10-Math.abs(Math.round(o));});
+  cards[0].classList.add('main');
   h.classList.add('on');h.setAttribute('aria-hidden','false');
+  fitHomeCards();
   if(sv)$('#cont').onclick=()=>{ac();sfx.click();resumeRun();};
   $('#titleLang').onclick=()=>{sfx.click();openLangPicker(title);};
   $('#go').onclick=()=>{ac();sfx.click();openDeckSelect(sv);};
